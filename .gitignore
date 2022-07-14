@@ -56,5 +56,8 @@ build
 *.pdf
 *.csv
 
+.cache/
+compile_commands.json
+
 ## Allow doc pdfs
 !/docs/*

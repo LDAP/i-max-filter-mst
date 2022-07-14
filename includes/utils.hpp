@@ -1,11 +1,13 @@
 #pragma once
 
 #include <algorithm>
+#include <cassert>
 #include <chrono>
 #include <iostream>
 #include <stack>
 #include <tuple>
 #include <vector>
+#include <sstream>
 
 #include "binary_includes.hpp"
 #include "definitions.hpp"
@@ -82,7 +84,7 @@ inline void add_back_edges(WEdgeList& edges) {
 // More efficient representations regarding space and construction time are
 // possible. This representation is only used for non-optimized framework
 // methods.
-void make_inefficient_adjacency_structure(algen::WEdgeList& edges,
+inline void make_inefficient_adjacency_structure(algen::WEdgeList& edges,
                                           std::vector<EdgeIdx>& first_out_edge,
                                           const algen::VertexId num_vertices) {
   using namespace algen;
@@ -113,7 +115,7 @@ void make_inefficient_adjacency_structure(algen::WEdgeList& edges,
 //      in the list, e'={v,u,w} is also contained in the list.
 // 4.   The vertex ids occurring in the edge list are smaller than the given
 //      number of vertices.
-std::pair<bool, std::string> edge_list_format_check(
+inline std::pair<bool, std::string> edge_list_format_check(
     const algen::WEdgeList& edges, const algen::VertexId num_vertices) {
   using namespace algen;
   std::stringstream msg;
@@ -190,7 +192,7 @@ std::pair<bool, std::string> edge_list_format_check(
 // Returns {true, "Is spanning tree."} if the given tree edges are a spanning
 // forest of the given graph edges. Returns {false, msg} otherwise where msg
 // describes the reason (not spanning or not a forest).
-std::pair<bool, std::string> is_spanning_forest(const WEdgeList& graph_edges,
+inline std::pair<bool, std::string> is_spanning_forest(const WEdgeList& graph_edges,
                                                 const WEdgeList& tree_edges,
                                                 const VertexId num_vertices) {
   auto sorted_graph_edges = graph_edges;

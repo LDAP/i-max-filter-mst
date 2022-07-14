@@ -1,7 +1,13 @@
 #pragma once
 
 
+#include <cassert>
+#include <random>
 #include <stack>
+#include <vector>
+
+#include "includes/definitions.hpp"
+#include "includes/utils.hpp"
 
 namespace benchmark {
 
