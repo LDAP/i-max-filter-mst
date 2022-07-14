@@ -55,3 +55,6 @@ build
 ### Evaluation files
 *.pdf
 *.csv
+
+## Allow doc pdfs
+!/docs/*
