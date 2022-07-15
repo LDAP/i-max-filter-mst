@@ -23,14 +23,69 @@ class RangeMaximumQuery {
     : n_levels(ceil_log_2(v.size()))
     , level_size(1ull << n_levels) {
 
-        v.resize(level_size, RMQ_MIN);
-        levels.resize(n_levels, std::vector<T>(level_size));
+        levels.resize(n_levels, std::vector<T>(level_size, RMQ_MIN));
 
         // build levels
 
-        std::size_t block_size = 1;
-        std::size_t block_count = level_size >> 1;
-        for(uint j = 0; j < n_levels; j++) {
+        // unroll case level = 0
+        for (std::size_t i = 1; i < v.size(); i += 2) {
+            levels[0][i] = v[i];
+        }
+        if (n_levels == 1) return;
+
+        // resize here to eliminate special cases
+        v.resize(level_size, RMQ_MIN);
+         
+        // unroll case level = 1
+        std::size_t l = 0;
+        std::size_t r = 2;
+        for(std::size_t i = 0; i < (level_size >> 2); i++) {
+            levels[1][l] = v[l + 1];
+
+            levels[1][r] = v[r];
+            levels[1][r + 1] = std::max(v[r], v[r + 1]);
+
+            l += 4;
+            r += 4;
+        }
+        if (n_levels == 2) return;
+
+        // unroll case level = 2
+        l = 3;
+        r = 4;
+        for(std::size_t i = 0; i < (level_size >> 3); i++) {
+            T l_max = RMQ_MIN;
+
+            l_max = std::max(l_max, v[l]);
+            l--;
+            levels[2][l] = l_max;
+
+            l_max = std::max(l_max, v[l]);
+            l--;
+            levels[2][l] = l_max;
+
+            l_max = std::max(l_max, v[l]);
+            l--;
+            levels[2][l] = l_max;
+
+            T r_max = RMQ_MIN;
+            levels[2][r] = r_max = std::max(r_max, v[r]);
+            r++;
+            levels[2][r] = r_max = std::max(r_max, v[r]);
+            r++;
+            levels[2][r] = r_max = std::max(r_max, v[r]);
+            r++;
+            levels[2][r] = r_max = std::max(r_max, v[r]);
+
+            l += 11;
+            r += 5;
+        }
+        if (n_levels == 3) return;
+
+        // general case
+        std::size_t block_size = 8;
+        std::size_t block_count = level_size >> 4;
+        for(uint j = 3; j < n_levels; j++) {
             for(std::size_t i = 0; i < block_count; i++) {
                 const std::size_t shift = i * (block_size << 1);
 
