@@ -31,5 +31,16 @@ target_link_libraries(
   GTest::gtest_main
 )
 
+add_executable(
+  range_maximum_query_test
+  range_maximum_query_test.cc
+)
+target_link_libraries(
+  range_maximum_query_test
+  implementation
+  GTest::gtest_main
+)
+
 include(GoogleTest)
 gtest_discover_tests(jarnik_prim_test)
+gtest_discover_tests(range_maximum_query_test)
