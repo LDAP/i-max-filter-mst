@@ -19,27 +19,28 @@ class RangeMaximumQuery {
   public:
     using Level = std::vector<T>;
 
-    explicit RangeMaximumQuery(std::vector<T> &v)
-    : n_levels(ceil_log_2(v.size()))
-    , level_size(1ull << n_levels) {
+    explicit RangeMaximumQuery(std::vector<T> &v) : n_levels(ceil_log_2(v.size())), level_size(1ull << n_levels) {
 
         levels.resize(n_levels, std::vector<T>(level_size, RMQ_MIN));
 
         // build levels
 
         // unroll case level = 0
-        for (std::size_t i = 1; i < v.size(); i += 2) {
+        for(std::size_t i = 1; i < v.size(); i += 2) {
             levels[0][i] = v[i];
         }
-        if (n_levels == 1) return;
+        if(n_levels == 1)
+            return;
 
         // resize here to eliminate special cases
         v.resize(level_size, RMQ_MIN);
-         
+
+        std::size_t block_count = level_size >> 2;
+
         // unroll case level = 1
         std::size_t l = 0;
         std::size_t r = 2;
-        for(std::size_t i = 0; i < (level_size >> 2); i++) {
+        for(std::size_t i = 0; i < block_count; i++) {
             levels[1][l] = v[l + 1];
 
             levels[1][r] = v[r];
@@ -48,12 +49,15 @@ class RangeMaximumQuery {
             l += 4;
             r += 4;
         }
-        if (n_levels == 2) return;
+        if(n_levels == 2)
+            return;
+
+        block_count = block_count >> 1;
 
         // unroll case level = 2
         l = 3;
         r = 4;
-        for(std::size_t i = 0; i < (level_size >> 3); i++) {
+        for(std::size_t i = 0; i < block_count; i++) {
             T l_max = RMQ_MIN;
 
             l_max = std::max(l_max, v[l]);
@@ -80,11 +84,13 @@ class RangeMaximumQuery {
             l += 11;
             r += 5;
         }
-        if (n_levels == 3) return;
+        if(n_levels == 3)
+            return;
+
+        block_count = block_count >> 1;
 
         // general case
         std::size_t block_size = 8;
-        std::size_t block_count = level_size >> 4;
         for(uint j = 3; j < n_levels; j++) {
             for(std::size_t i = 0; i < block_count; i++) {
                 const std::size_t shift = i * (block_size << 1);
