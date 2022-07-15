@@ -18,3 +18,18 @@ set_target_properties(imported_binaries_for_tests PROPERTIES IMPORTED_LOCATION "
 
 add_executable(test_edge_classification test_edge_classification.cpp)
 target_link_libraries(test_edge_classification PRIVATE base_target  imported_binaries_for_tests)
+
+enable_testing()
+
+add_executable(
+  jarnik_prim_test
+  jarnik_prim_test.cc
+)
+target_link_libraries(
+  jarnik_prim_test
+  implementation
+  GTest::gtest_main
+)
+
+include(GoogleTest)
+gtest_discover_tests(jarnik_prim_test)

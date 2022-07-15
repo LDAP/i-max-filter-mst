@@ -57,5 +57,12 @@ add_subdirectory(src)
 add_subdirectory(benchmark)
 add_subdirectory(tests)
 
-message(${CMAKE_SYSTEM})
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  GIT_REPOSITORY https://github.com/google/googletest.git
+  GIT_TAG release-1.12.1
+)
+FetchContent_MakeAvailable(googletest)
 
+message(${CMAKE_SYSTEM})
