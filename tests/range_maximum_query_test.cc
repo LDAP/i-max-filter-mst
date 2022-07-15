@@ -32,3 +32,24 @@ TEST(RMQTests, paperExample) {
     ASSERT_EQ(rmq.query(10, 11), 41);
     ASSERT_EQ(rmq.query(10, 12), 62);
 };
+
+// TEST(RMQTests, performance) {
+//     std::vector<std::size_t> v(100000);
+
+//     for (int i = 0; i < 100000; i++) {
+//         v[i] = rand();
+//     }
+
+//     double time = 0;
+//     for (int i = 0; i < 1000; i++) {
+//         auto t0 = std::chrono::system_clock::now();
+//         RangeMaximumQuery<std::size_t> rmq(v);
+//         auto t1 = std::chrono::system_clock::now();
+//         time += std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count();
+//     }
+
+//     time /= 1000.;
+
+//     std::cout << time << std::endl;
+//     FAIL();
+// }
