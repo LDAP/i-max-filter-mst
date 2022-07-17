@@ -16,8 +16,8 @@ algen::WEdgeList JarnikPrim::operator()(const algen::WEdgeList &edge_list, const
 
     auto root_edge = edge_list.begin();
     while (msf.size() < num_msf_edges) {
-        algen::VertexId root = root_edge->tail;
-        AdjacencyArray::NodeHandle idx_root = graph.vertexIdToIndex(root);
+        const algen::VertexId root = root_edge->tail;
+        const AdjacencyArray::NodeHandle idx_root = graph.vertexIdToIndex(root);
         best_weights[idx_root] = 0;
         in_msf[idx_root] = true;
         parents[idx_root] = root;
