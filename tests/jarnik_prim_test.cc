@@ -1,5 +1,6 @@
 #include "../includes/definitions.hpp"
 #include "../src/jarnik_prim.h"
+#include "../includes/utils.hpp"
 
 #include <algorithm>
 #include <gtest/gtest.h>
@@ -15,6 +16,7 @@ TEST(JarnikPrimTests, mst_correctness) {
     edges.emplace_back(1, 3, 1);
     edges.emplace_back(3, 4, 1);
     edges.emplace_back(2, 5, 5);
+    algen::add_back_edges(edges);
     JarnikPrim jp;
     auto mst = jp(edges, 6);
 
@@ -48,8 +50,9 @@ TEST(JarnikPrimTests, msf_correctness) {
 
     edges.emplace_back(42, 43, 1);
 
+    algen::add_back_edges(edges);
     JarnikPrim jp;
-    auto mst = jp(edges, 44);
+    auto mst = jp(edges, 11);
 
     algen::WEdgeList correct_mst;
     correct_mst.emplace_back(0, 2, 1);

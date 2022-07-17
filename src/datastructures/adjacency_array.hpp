@@ -1,41 +1,50 @@
 #include "../../includes/definitions.hpp"
+#include "../../includes/utils.hpp"
 
 #include <algorithm>
 #include <iostream>
+#include <unordered_map>
 
 class AdjacencyArray {
   public:
-    using EdgeIterator = std::vector<std::pair<algen::VertexId, algen::Weight>>::const_iterator;
+    using EdgeIterator = std::vector<algen::WEdge>::const_iterator;
+    using NodeHandle = algen::VertexId;
 
     explicit AdjacencyArray(const algen::WEdgeList &edges, const algen::VertexId num_vertices) {
-        _indices.resize(num_vertices + 1);
-        _edge_endpoints.resize(edges.size());
-        std::vector<bool> vertex_reachable(num_vertices, false);
+        _edges_sorted.resize(edges.size());
+        std::partial_sort_copy(begin(edges),
+                               end(edges),
+                               begin(_edges_sorted),
+                               end(_edges_sorted),
+                               algen::TailHeadOrder<algen::WEdge>());
 
-        std::vector<size_t> edge_count(num_vertices, 0);
-        for (const auto &e : edges) {
-            edge_count[e.tail]++;
-            vertex_reachable[e.head] = true;
-            vertex_reachable[e.tail] = true;
+        // _indices.reserve(num_vertices >> 1);
+        // _vertex_id_to_index.reserve(num_vertices >> 1);
+        algen::VertexId current_tail = -1;
+        for (std::size_t idx = 0; idx < _edges_sorted.size(); ++idx) {
+            if (_edges_sorted[idx].tail != current_tail) {
+                current_tail = _edges_sorted[idx].tail;
+                _vertex_id_to_index.insert(std::make_pair(current_tail, _indices.size()));
+                _indices.push_back(idx);
+            }
         }
-        for (size_t i = 1; i <= num_vertices; ++i) {
-            _indices[i] = _indices[i - 1] + edge_count[i - 1];
-        }
-        for (const auto &e : edges) {
-            const size_t idx = _indices[e.tail + 1] - edge_count[e.tail]--;
-            _edge_endpoints[idx] = std::make_pair(e.head, e.weight);
-        }
-        _num_reachable_vertices = std::count(vertex_reachable.begin(), vertex_reachable.end(), true);
+        _indices.push_back(_edges_sorted.size());
+        _num_reachable_vertices = _vertex_id_to_index.size();
     }
 
     EdgeIterator beginEdges(const algen::VertexId v) const {
-        return _edge_endpoints.begin() + _indices[v];
+        return _edges_sorted.begin() + _indices[vertexIdToIndex(v)];
     }
 
     EdgeIterator endEdges(const algen::VertexId v) const {
-        return _edge_endpoints.begin() + _indices[v + 1];
+        return _edges_sorted.begin() + _indices[vertexIdToIndex(v) + 1];
     }
 
+    NodeHandle vertexIdToIndex(const algen::VertexId v) const {
+        assert(_vertex_id_to_index.find(v) != _vertex_id_to_index.end());
+        assert(_vertex_id_to_index.at(v) < _indices.size());
+        return _vertex_id_to_index.at(v);
+    }
 
     algen::VertexId numReachableVertices() const {
         return _num_reachable_vertices;
@@ -43,6 +52,7 @@ class AdjacencyArray {
 
   private:
     std::vector<std::size_t> _indices;
-    std::vector<std::pair<algen::VertexId, algen::Weight>> _edge_endpoints;
+    std::vector<algen::WEdge> _edges_sorted;
+    std::unordered_map<algen::VertexId, algen::VertexId> _vertex_id_to_index;
     algen::VertexId _num_reachable_vertices;
 };
