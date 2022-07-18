@@ -21,8 +21,7 @@ TEST(JarnikPrimTests, mst_correctness) {
     JarnikPrim jp;
     algen::WEdgeList mst;
     std::vector<std::size_t> component_ids(num_vertices, 0);
-    algen::VertexArray isolated_vertices;
-    jp(edges, mst, num_vertices, component_ids, isolated_vertices);
+    jp(edges, mst, num_vertices, component_ids);
 
     algen::WEdgeList correct_mst;
     correct_mst.emplace_back(0, 2, 1);
@@ -59,8 +58,7 @@ TEST(JarnikPrimTests, msf_correctness) {
     JarnikPrim jp;
     algen::WEdgeList mst;
     std::vector<std::size_t> component_ids(num_vertices, 0);
-    algen::VertexArray isolated_vertices;
-    jp(edges, mst, num_vertices, component_ids, isolated_vertices);
+    jp(edges, mst, num_vertices, component_ids);
 
     algen::WEdgeList correct_mst;
     correct_mst.emplace_back(0, 2, 1);

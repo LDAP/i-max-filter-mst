@@ -4,6 +4,7 @@
 #include "includes/binary_includes.hpp"
 #include "naive_jarnik_prim.hpp"
 #include "naive_kruskal.hpp"
+#include "i_max_filter.hpp"
 
 namespace mst_construction {
 namespace params {
@@ -42,6 +43,12 @@ constexpr std::tuple contenders{
               [] {
                 return [](const algen::WEdgeList& el, const algen::VertexId n) {
                   return fast_kruskal(el, n);
+                };
+              }},
+    Contender{"i_max_filter",
+              [] {
+                return [](const algen::WEdgeList& el, const algen::VertexId n) {
+                  return IMaxFilter()(el, n);
                 };
               }},
 

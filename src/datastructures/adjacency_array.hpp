@@ -2,8 +2,6 @@
 #include "../../includes/utils.hpp"
 
 #include <algorithm>
-#include <iostream>
-#include <unordered_map>
 
 class AdjacencyArray {
   public:

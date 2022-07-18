@@ -27,24 +27,24 @@ class RangeMaximumQuery {
         // build levels
 
         std::size_t block_count = level_size >> 1;
-        std::size_t shift = 0; 
+        std::size_t shift = 0;
 
         // general case
         std::size_t block_size = 1;
-        for(uint j = 0; j < n_levels; j++) {
-            for(std::size_t i = 0; i < block_count; i++) {
+        for (uint j = 0; j < n_levels; j++) {
+            for (std::size_t i = 0; i < block_count; i++) {
                 const std::size_t block_shift = i * (block_size << 1);
 
                 std::size_t l = block_size - 2 + block_shift;
                 T l_max = RMQ_MIN;
-                for(std::size_t k = 1; k < block_size; k++) {
+                for (std::size_t k = 1; k < block_size; k++) {
                     levels[shift + l] = l_max = std::max(l_max, v[l + 1]);
                     l--;
                 }
 
                 std::size_t r = block_size + block_shift;
                 T r_max = RMQ_MIN;
-                for(std::size_t k = 0; k < block_size; k++) {
+                for (std::size_t k = 0; k < block_size; k++) {
                     levels[shift + r] = r_max = std::max(r_max, v[r]);
                     r++;
                 }

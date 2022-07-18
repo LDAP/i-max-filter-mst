@@ -7,8 +7,9 @@
 void JarnikPrim::operator()(const algen::WEdgeList &edge_list,
                             algen::WEdgeList &msf,
                             const algen::VertexId num_vertices,
-                            std::vector<std::size_t> &component_ids,
-                            algen::VertexArray &isolated_vertices) {
+                            std::vector<std::size_t> &component_ids) {
+    assert(component_ids.size() == num_vertices);
+
     const GraphRepresentation graph(edge_list, num_vertices);
     PriorityQueue pq;
     std::vector<algen::Weight> best_weights(num_vertices, W_INF);
@@ -17,7 +18,6 @@ void JarnikPrim::operator()(const algen::WEdgeList &edge_list,
     algen::VertexId num_msf_edges = num_vertices;
     msf.reserve(num_msf_edges);
 
-    std::size_t component_id = 0;
     for (algen::VertexId root = 0; root < num_vertices; ++root) {
         if (in_msf[root]) {
             continue;
@@ -26,7 +26,7 @@ void JarnikPrim::operator()(const algen::WEdgeList &edge_list,
         }
         best_weights[root] = 0;
         in_msf[root] = true;
-        component_ids[root] = component_id;
+        component_ids[root] = root + 1;
         parents[root] = root;
         for (auto it = graph.beginEdges(root); it != graph.endEdges(root); ++it) {
             const algen::VertexId v = it->head;
@@ -36,10 +36,6 @@ void JarnikPrim::operator()(const algen::WEdgeList &edge_list,
             pq.push(std::make_pair(w, v));
         }
 
-        if (pq.empty()) { // no edge contains this node
-            isolated_vertices.push_back(root);
-        }
-
         while (!pq.empty() && msf.size() < num_msf_edges) {
             const algen::VertexId u = pq.top().second;
             pq.pop();
@@ -47,7 +43,7 @@ void JarnikPrim::operator()(const algen::WEdgeList &edge_list,
                 continue;
 
             msf.emplace_back(parents[u], u, best_weights[u]);
-            component_ids[u] = component_id;
+            component_ids[u] = root + 1;
             in_msf[u] = true;
             for (auto it = graph.beginEdges(u); it != graph.endEdges(u); ++it) {
                 const algen::VertexId v = it->head;
@@ -60,8 +56,6 @@ void JarnikPrim::operator()(const algen::WEdgeList &edge_list,
                 }
             }
         }
-
-        component_id++;
     }
     assert(msf.size() == num_msf_edges);
 }

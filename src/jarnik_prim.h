@@ -16,6 +16,5 @@ class JarnikPrim {
     void operator()(const algen::WEdgeList &edge_list,
                     algen::WEdgeList &msf,
                     const algen::VertexId num_vertices,
-                    std::vector<std::size_t> &component_ids,
-                    algen::VertexArray &isolated_vertices);
+                    std::vector<std::size_t> &component_ids);
 };
