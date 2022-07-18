@@ -28,6 +28,7 @@ add_executable(
 target_link_libraries(
   jarnik_prim_test
   implementation
+  imported_binaries_for_tests
   GTest::gtest_main
 )
 
@@ -41,6 +42,18 @@ target_link_libraries(
   GTest::gtest_main
 )
 
+add_executable(
+  i_max_filter_test
+  i_max_filter_test.cc
+)
+target_link_libraries(
+  i_max_filter_test
+  implementation
+  imported_binaries_for_tests
+  GTest::gtest_main
+)
+
 include(GoogleTest)
 gtest_discover_tests(jarnik_prim_test)
 gtest_discover_tests(range_maximum_query_test)
+gtest_discover_tests(i_max_filter_test)

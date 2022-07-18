@@ -10,6 +10,7 @@ void JarnikPrim::operator()(const algen::WEdgeList &edge_list,
                             std::vector<std::size_t> &component_ids,
                             std::vector<std::size_t> &jp_nums) {
     assert(component_ids.size() == num_vertices);
+    assert(jp_nums.size() == num_vertices);
 
     const GraphRepresentation graph(edge_list, num_vertices);
     PriorityQueue pq;

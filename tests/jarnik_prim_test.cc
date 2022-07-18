@@ -1,3 +1,4 @@
+#include "../benchmark/graph_generation.hpp"
 #include "../includes/definitions.hpp"
 #include "../includes/utils.hpp"
 #include "../src/jarnik_prim.h"
@@ -77,4 +78,22 @@ TEST(JarnikPrimTests, msf_correctness) {
         ASSERT_EQ(mst[i].head, correct_mst[i].head);
         ASSERT_EQ(mst[i].weight, correct_mst[i].weight);
     }
+};
+
+TEST(JarnikPrimTests, generator_correctness) {
+    benchmark::GNM_Generator generator;
+    const std::size_t max_edge_weight = 255;
+    std::size_t log_n = 10;
+    std::size_t log_m = 10;
+    generator.configure(log_n, log_m, max_edge_weight);
+    auto gen_edges = generator.generate();
+
+    const std::size_t num_vertices = 1ull << log_n;
+    const auto mst_org = fast_kruskal(gen_edges, 1ull << log_n);
+    algen::WEdgeList mst_jp;
+    std::vector<std::size_t> blib(num_vertices);
+    std::vector<std::size_t> blub(num_vertices);
+    JarnikPrim()(gen_edges, mst_jp, 1ull << log_n, blib, blub);
+    algen::add_back_edges(mst_jp);
+    ASSERT_EQ(algen::sum_weights(mst_org), algen::sum_weights(mst_jp));
 };

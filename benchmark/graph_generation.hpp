@@ -1,5 +1,8 @@
 #pragma once
 
+#include "../includes/definitions.hpp"
+#include "../includes/utils.hpp"
+
 #include <algorithm>
 #include <cassert>
 #include <iomanip>
@@ -8,9 +11,6 @@
 #include <numeric>
 #include <random>
 #include <unordered_set>
-
-#include "includes/definitions.hpp"
-#include "includes/utils.hpp"
 
 namespace benchmark {
 
