@@ -4,62 +4,66 @@
 #include <iostream>
 #include <utility>
 
+void jp_from_node(algen::VertexId root,
+                  const JarnikPrim::GraphRepresentation &graph,
+                  std::vector<algen::Weight> &best_weights,
+                  std::vector<algen::VertexId> &prev,
+                  std::vector<std::size_t> &component_ids,
+                  std::vector<std::size_t> &node_to_msf_array,
+                  algen::WEdgeList &msf) {
+
+    JarnikPrim::PriorityQueue pq;
+
+    // prepare algorithm by "visiting" root
+    best_weights[root] = 0;
+    component_ids[root] = root;
+    node_to_msf_array[root] = msf.size();
+    for (auto it = graph.beginEdges(root); it != graph.endEdges(root); ++it) {
+        best_weights[it->second] = it->first;
+        prev[it->second] = root;
+        pq.push(*it);
+    }
+
+    while (!pq.empty()) {
+        JarnikPrim::GraphRepresentation::Edge current = pq.top(); // weight, vertexid
+        pq.pop();
+
+        if (current.first > best_weights[current.second])
+            continue;
+
+        // edge selected
+        node_to_msf_array[current.second] = msf.size();
+        msf.push_back({prev[current.second], current.second, current.first});
+        component_ids[current.second] = root;
+
+        // check out neighbors of node at other end
+        for (auto it = graph.beginEdges(current.second); it != graph.endEdges(current.second); ++it) {
+            if (it->first < best_weights[it->second]) {
+                best_weights[it->second] = it->first;
+                prev[it->second] = current.second;
+                pq.push(*it);
+            }
+        }
+    }
+}
+
 void JarnikPrim::operator()(const algen::WEdgeList &edge_list,
                             algen::WEdgeList &msf,
                             const algen::VertexId num_vertices,
                             std::vector<std::size_t> &component_ids,
-                            std::vector<std::size_t> &jp_nums) {
+                            std::vector<std::size_t> &node_to_msf_array) {
     assert(component_ids.size() == num_vertices);
-    assert(jp_nums.size() == num_vertices);
+    assert(node_to_msf_array.size() == num_vertices);
 
     const GraphRepresentation graph(edge_list, num_vertices);
-    PriorityQueue pq;
     std::vector<algen::Weight> best_weights(num_vertices, W_INF);
-    std::vector<bool> in_msf(num_vertices, false);
-    std::vector<algen::VertexId> parents(num_vertices, -1);
-    algen::VertexId num_msf_edges = num_vertices;
-    msf.reserve(num_msf_edges);
-    std::size_t jp_num = 0;
+    std::vector<algen::VertexId> prev(num_vertices, -1);
+
+    msf.reserve(num_vertices);
 
     for (algen::VertexId root = 0; root < num_vertices; ++root) {
-        if (in_msf[root])
+        if (best_weights[root] != W_INF)
             continue;
-
-        jp_nums[root] = jp_num++;
-        num_msf_edges--;
-        best_weights[root] = 0;
-        in_msf[root] = true;
-        component_ids[root] = root + 1;
-        parents[root] = root;
-        for (auto it = graph.beginEdges(root); it != graph.endEdges(root); ++it) {
-            const algen::VertexId v = it->head;
-            const algen::Weight w = it->weight;
-            best_weights[v] = w;
-            parents[v] = root;
-            pq.push(std::make_pair(w, v));
-        }
-
-        while (!pq.empty() && msf.size() < num_msf_edges) {
-            const algen::VertexId u = pq.top().second;
-            pq.pop();
-            if (in_msf[u])
-                continue;
-
-            msf.emplace_back(parents[u], u, best_weights[u]);
-            jp_nums[u] = jp_num++;
-            component_ids[u] = root + 1;
-            in_msf[u] = true;
-            for (auto it = graph.beginEdges(u); it != graph.endEdges(u); ++it) {
-                const algen::VertexId v = it->head;
-                const algen::Weight w = it->weight;
-
-                if (!in_msf[v] && best_weights[v] > w) {
-                    best_weights[v] = w;
-                    parents[v] = u;
-                    pq.push(std::make_pair(w, v));
-                }
-            }
-        }
+        jp_from_node(root, graph, best_weights, prev, component_ids, node_to_msf_array, msf);
     }
-    assert(msf.size() == num_msf_edges);
 }

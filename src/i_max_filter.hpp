@@ -14,7 +14,7 @@ class IMaxFilter {
         algen::WEdgeList edge_sample;
         edge_sample.reserve(sample_size);
         algen::WEdgeList msf;
-        std::vector<std::size_t> component_ids(num_vertices, 0);
+        std::vector<std::size_t> component_ids(num_vertices, -1);
         std::vector<std::size_t> jp_nums(num_vertices, 0);
         JarnikPrim jp;
 
@@ -32,8 +32,8 @@ class IMaxFilter {
                      end(edge_list),
                      std::back_inserter(msf),
                      [&rmq, &jp_nums, &component_ids](const auto &e) {
-                         return e.weight < rmq.query(jp_nums[e.tail], jp_nums[e.head]) ||
-                                component_ids[e.tail] != component_ids[e.head];
+                         return component_ids[e.tail] != component_ids[e.head] ||
+                                e.weight < rmq.query(jp_nums[e.tail], jp_nums[e.head]);
                      });
 
         // Final MST
