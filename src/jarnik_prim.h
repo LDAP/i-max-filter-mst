@@ -11,8 +11,11 @@ class JarnikPrim {
     using PriorityQueue = std::priority_queue<Edge, std::vector<Edge>, std::greater<Edge>>;
     const algen::Weight W_INF = std::numeric_limits<algen::Weight>::max();
 
-    // TODO: Add different graph representations <noahares>
     using GraphRepresentation = AdjacencyArray;
 
-    algen::WEdgeList operator()(const algen::WEdgeList &edge_list, const algen::VertexId num_vertices);
+    void operator()(const algen::WEdgeList &edge_list,
+                    algen::WEdgeList &msf,
+                    const algen::VertexId num_vertices,
+                    std::vector<std::size_t> &component_ids,
+                    algen::VertexArray &isolated_vertices);
 };

@@ -4,66 +4,64 @@
 #include <iostream>
 #include <utility>
 
-algen::WEdgeList JarnikPrim::operator()(const algen::WEdgeList &edge_list, const algen::VertexId num_vertices) {
+void JarnikPrim::operator()(const algen::WEdgeList &edge_list,
+                            algen::WEdgeList &msf,
+                            const algen::VertexId num_vertices,
+                            std::vector<std::size_t> &component_ids,
+                            algen::VertexArray &isolated_vertices) {
     const GraphRepresentation graph(edge_list, num_vertices);
     PriorityQueue pq;
-    std::vector<algen::Weight> best_weights(graph.numReachableVertices(), W_INF);
-    std::vector<bool> in_msf(graph.numReachableVertices(), false);
-    std::vector<algen::VertexId> parents(graph.numReachableVertices(), -1);
-    algen::WEdgeList msf;
-    algen::VertexId num_msf_edges = graph.numReachableVertices() - 1;
+    std::vector<algen::Weight> best_weights(num_vertices, W_INF);
+    std::vector<bool> in_msf(num_vertices, false);
+    std::vector<algen::VertexId> parents(num_vertices, -1);
+    algen::VertexId num_msf_edges = num_vertices;
     msf.reserve(num_msf_edges);
 
-    auto root_edge = edge_list.begin();
-    while (msf.size() < num_msf_edges) {
-        const algen::VertexId root = root_edge->tail;
-        const AdjacencyArray::NodeHandle idx_root = graph.vertexIdToIndex(root);
-        best_weights[idx_root] = 0;
-        in_msf[idx_root] = true;
-        parents[idx_root] = root;
+    std::size_t component_id = 0;
+    for (algen::VertexId root = 0; root < num_vertices; ++root) {
+        if (in_msf[root]) {
+            continue;
+        } else {
+            num_msf_edges--;
+        }
+        best_weights[root] = 0;
+        in_msf[root] = true;
+        component_ids[root] = component_id;
+        parents[root] = root;
         for (auto it = graph.beginEdges(root); it != graph.endEdges(root); ++it) {
             const algen::VertexId v = it->head;
-            const AdjacencyArray::NodeHandle idx_v = graph.vertexIdToIndex(v);
             const algen::Weight w = it->weight;
-            best_weights[idx_v] = w;
-            parents[idx_v] = root_edge->tail;
+            best_weights[v] = w;
+            parents[v] = root;
             pq.push(std::make_pair(w, v));
+        }
+
+        if (pq.empty()) { // no edge contains this node
+            isolated_vertices.push_back(root);
         }
 
         while (!pq.empty() && msf.size() < num_msf_edges) {
             const algen::VertexId u = pq.top().second;
-            const AdjacencyArray::NodeHandle idx_u = graph.vertexIdToIndex(u);
             pq.pop();
-            if (in_msf[idx_u])
+            if (in_msf[u])
                 continue;
 
-            msf.emplace_back(parents[idx_u], u, best_weights[idx_u]);
-            in_msf[idx_u] = true;
+            msf.emplace_back(parents[u], u, best_weights[u]);
+            component_ids[u] = component_id;
+            in_msf[u] = true;
             for (auto it = graph.beginEdges(u); it != graph.endEdges(u); ++it) {
                 const algen::VertexId v = it->head;
-                const AdjacencyArray::NodeHandle idx_v = graph.vertexIdToIndex(v);
                 const algen::Weight w = it->weight;
 
-                if (!in_msf[idx_v] && best_weights[idx_v] > w) {
-                    best_weights[idx_v] = w;
-                    parents[idx_v] = u;
+                if (!in_msf[v] && best_weights[v] > w) {
+                    best_weights[v] = w;
+                    parents[v] = u;
                     pq.push(std::make_pair(w, v));
                 }
             }
         }
 
-        root_edge = std::find_if(root_edge, edge_list.end(), [&in_msf, &graph](const auto &e) {
-            return !in_msf[graph.vertexIdToIndex(e.tail)];
-        });
-        if (root_edge == edge_list.end())
-            break;
-        num_msf_edges--;
+        component_id++;
     }
-
-    // for (const auto& e : msf) {
-    //   std::cout << e.tail << "," << e.head << " ";
-    // }
-    // std::cout << std::endl;
-
-    return msf;
+    assert(msf.size() == num_msf_edges);
 }

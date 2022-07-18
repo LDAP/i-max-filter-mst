@@ -1,6 +1,6 @@
 #include "../includes/definitions.hpp"
-#include "../src/jarnik_prim.h"
 #include "../includes/utils.hpp"
+#include "../src/jarnik_prim.h"
 
 #include <algorithm>
 #include <gtest/gtest.h>
@@ -8,6 +8,7 @@
 using ::testing::Test;
 
 TEST(JarnikPrimTests, mst_correctness) {
+    const algen::VertexId num_vertices = 6;
     algen::WEdgeList edges;
     edges.emplace_back(0, 1, 3);
     edges.emplace_back(0, 2, 1);
@@ -18,7 +19,10 @@ TEST(JarnikPrimTests, mst_correctness) {
     edges.emplace_back(2, 5, 5);
     algen::add_back_edges(edges);
     JarnikPrim jp;
-    auto mst = jp(edges, 6);
+    algen::WEdgeList mst;
+    std::vector<std::size_t> component_ids(num_vertices, 0);
+    algen::VertexArray isolated_vertices;
+    jp(edges, mst, num_vertices, component_ids, isolated_vertices);
 
     algen::WEdgeList correct_mst;
     correct_mst.emplace_back(0, 2, 1);
@@ -35,6 +39,7 @@ TEST(JarnikPrimTests, mst_correctness) {
 };
 
 TEST(JarnikPrimTests, msf_correctness) {
+    const algen::VertexId num_vertices = 44;
     algen::WEdgeList edges;
     edges.emplace_back(0, 1, 3);
     edges.emplace_back(0, 2, 1);
@@ -52,7 +57,10 @@ TEST(JarnikPrimTests, msf_correctness) {
 
     algen::add_back_edges(edges);
     JarnikPrim jp;
-    auto mst = jp(edges, 11);
+    algen::WEdgeList mst;
+    std::vector<std::size_t> component_ids(num_vertices, 0);
+    algen::VertexArray isolated_vertices;
+    jp(edges, mst, num_vertices, component_ids, isolated_vertices);
 
     algen::WEdgeList correct_mst;
     correct_mst.emplace_back(0, 2, 1);
