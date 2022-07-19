@@ -15,8 +15,8 @@ class IMaxFilter {
         edge_sample.reserve(sample_size);
         algen::WEdgeList msf;
         std::vector<algen::Weight> jp_weights;
-        std::vector<std::size_t> component_ids(num_vertices, -1);
-        std::vector<std::size_t> jp_nums(num_vertices, 0);
+        std::vector<std::size_t> component_ids;
+        std::vector<std::size_t> jp_nums;
         JarnikPrim jp;
 
         // MST from sampled edges
@@ -38,8 +38,6 @@ class IMaxFilter {
         // Final MST
         algen::WEdgeList final_mst;
         jp(msf, final_mst, num_vertices, component_ids, jp_nums, jp_weights);
-        // TODO: Fix duplicates and remove this
-        algen::add_back_edges(final_mst);
         return final_mst;
     }
 

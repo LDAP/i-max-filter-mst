@@ -14,6 +14,7 @@ void jp_from_node(algen::VertexId root,
                   algen::WEdgeList &msf) {
 
     JarnikPrim::PriorityQueue pq;
+    const std::size_t no_component = (std::size_t) -1;
 
     // prepare algorithm by "visiting" root
     best_weights[root] = 0;
@@ -30,7 +31,7 @@ void jp_from_node(algen::VertexId root,
         JarnikPrim::GraphRepresentation::Edge current = pq.top(); // weight, vertexid
         pq.pop();
 
-        if (current.first > best_weights[current.second])
+        if (component_ids[current.second] != no_component)
             continue;
 
         // edge selected
@@ -43,7 +44,7 @@ void jp_from_node(algen::VertexId root,
 
         // check out neighbors of node at other end
         for (auto it = graph.beginEdges(current.second); it != graph.endEdges(current.second); ++it) {
-            if (it->first < best_weights[it->second]) {
+            if (component_ids[it->second] == no_component && it->first < best_weights[it->second]) {
                 best_weights[it->second] = it->first;
                 prev[it->second] = current.second;
                 pq.push(*it);
@@ -58,12 +59,14 @@ void JarnikPrim::operator()(const algen::WEdgeList &edge_list,
                             std::vector<std::size_t> &component_ids,
                             std::vector<std::size_t> &jp_nums,
                             std::vector<algen::Weight> &jp_weights) {
-    assert(component_ids.size() == num_vertices);
-    assert(jp_nums.size() == num_vertices);
+    assert(jp_weights.size() == 0);
 
     const GraphRepresentation graph(edge_list, num_vertices);
     std::vector<algen::Weight> best_weights(num_vertices, W_INF);
     std::vector<algen::VertexId> prev(num_vertices, -1);
+
+    jp_nums.resize(num_vertices);
+    component_ids.assign(num_vertices, -1);
 
     msf.reserve(num_vertices);
     jp_weights.reserve(num_vertices);
