@@ -17,5 +17,6 @@ class JarnikPrim {
                     algen::WEdgeList &msf,
                     const algen::VertexId num_vertices,
                     std::vector<std::size_t> &component_ids,
-                    std::vector<std::size_t> &jp_nums);
+                    std::vector<std::size_t> &jp_nums,
+                    std::vector<algen::Weight> &jp_weights);
 };
