@@ -82,7 +82,7 @@ class RangeMaximumQuery {
     }
 
   private:
-    unsigned int n_levels;
-    std::size_t level_size;
+    const unsigned int n_levels;
+    const std::size_t level_size;
     std::vector<T> levels;
 };
