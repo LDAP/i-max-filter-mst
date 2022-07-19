@@ -64,6 +64,12 @@ class JarnikPrim {
         return vertex_data[vertexId].component_id;
     }
 
+    algen::WEdgeList operator()(const algen::WEdgeList &edge_list, const algen::VertexId) {
+        algen::WEdgeList result;
+        jarnik_prim(edge_list, result);
+        return result;
+    }
+
   private:
     const std::size_t num_vertices;
     VertexData *const vertex_data;

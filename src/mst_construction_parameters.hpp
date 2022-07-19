@@ -5,6 +5,7 @@
 #include "naive_jarnik_prim.hpp"
 #include "naive_kruskal.hpp"
 #include "i_max_filter.hpp"
+#include "jarnik_prim.h"
 
 namespace mst_construction {
 namespace params {
@@ -49,6 +50,12 @@ constexpr std::tuple contenders{
               [] {
                 return [](const algen::WEdgeList& el, const algen::VertexId n) {
                   return IMaxFilter()(el, n);
+                };
+              }},
+    Contender{"jarnik_prim",
+              [] {
+                return [](const algen::WEdgeList& el, const algen::VertexId n) {
+                  return JarnikPrim(n)(el, n);
                 };
               }},
 
