@@ -28,9 +28,9 @@ class JarnikPrim {
 
     using GraphRepresentation = AdjacencyArray;
 
-    JarnikPrim(const std::size_t num_vertices) : num_vertices(num_vertices) {
-        vertex_data = new VertexData[num_vertices];
-    }
+    JarnikPrim(const std::size_t num_vertices)
+        : num_vertices(num_vertices)
+        , vertex_data(new VertexData[num_vertices]) {}
 
     ~JarnikPrim() {
         delete[] vertex_data;
@@ -66,6 +66,6 @@ class JarnikPrim {
 
   private:
     const std::size_t num_vertices;
-    VertexData* vertex_data;
+    VertexData *const vertex_data;
     PriorityQueue pq;
 };
