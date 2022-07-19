@@ -38,6 +38,8 @@ class IMaxFilter {
         // Final MST
         algen::WEdgeList final_mst;
         jp(msf, final_mst, num_vertices, component_ids, jp_nums, jp_weights);
+        // TODO: Fix duplicates and remove this
+        algen::add_back_edges(final_mst);
         return final_mst;
     }
 
