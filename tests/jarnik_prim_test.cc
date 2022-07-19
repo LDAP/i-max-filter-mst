@@ -19,12 +19,11 @@ TEST(JarnikPrimTests, mst_correctness) {
     edges.emplace_back(3, 4, 1);
     edges.emplace_back(2, 5, 5);
     algen::add_back_edges(edges);
-    JarnikPrim jp;
+    JarnikPrim jp(num_vertices);
     algen::WEdgeList mst;
-    std::vector<std::size_t> component_ids(num_vertices, 0);
     std::vector<std::size_t> jp_nums(num_vertices, -1);
     std::vector<algen::Weight> jp_weights;
-    jp(edges, mst, num_vertices, component_ids, jp_nums, jp_weights);
+    jp.i_max_filter_jarnik_prim(edges, mst, jp_nums, jp_weights);
 
     algen::WEdgeList correct_mst;
     correct_mst.emplace_back(0, 2, 1);
@@ -63,12 +62,11 @@ TEST(JarnikPrimTests, msf_correctness) {
     edges.emplace_back(42, 43, 1);
 
     algen::add_back_edges(edges);
-    JarnikPrim jp;
+    JarnikPrim jp(num_vertices);
     algen::WEdgeList mst;
-    std::vector<std::size_t> component_ids(num_vertices, 0);
     std::vector<std::size_t> jp_nums(num_vertices, -1);
     std::vector<algen::Weight> jp_weights;
-    jp(edges, mst, num_vertices, component_ids, jp_nums, jp_weights);
+    jp.i_max_filter_jarnik_prim(edges, mst, jp_nums, jp_weights);
 
     algen::WEdgeList correct_mst;
     correct_mst.emplace_back(0, 2, 1);
@@ -107,10 +105,9 @@ TEST(JarnikPrimTests, generator_correctness) {
     const std::size_t num_vertices = 1ull << log_n;
     const auto mst_org = fast_kruskal(gen_edges, 1ull << log_n);
     algen::WEdgeList mst_jp;
-    std::vector<std::size_t> blib(num_vertices);
     std::vector<std::size_t> blub(num_vertices);
     std::vector<algen::Weight> jp_weights;
-    JarnikPrim()(gen_edges, mst_jp, 1ull << log_n, blib, blub, jp_weights);
+    JarnikPrim(num_vertices).i_max_filter_jarnik_prim(gen_edges, mst_jp, blub, jp_weights);
     algen::add_back_edges(mst_jp);
     ASSERT_EQ(algen::sum_weights(mst_org), algen::sum_weights(mst_jp));
 };

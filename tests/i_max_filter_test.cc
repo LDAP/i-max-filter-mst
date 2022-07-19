@@ -17,7 +17,7 @@ TEST(IMaxFilterTests, correctness) {
     auto gen_edges = generator.generate();
 
     const std::size_t num_vertices = 1ull << log_n;
-    const auto mst_i_max_filter = IMaxFilter()(gen_edges, 1ull << log_n);
+    const auto mst_i_max_filter = IMaxFilter()(gen_edges, num_vertices);
     const auto mst_org = fast_kruskal(gen_edges, 1ull << log_n);
     ASSERT_EQ(algen::sum_weights(mst_org), algen::sum_weights(mst_i_max_filter));
 };

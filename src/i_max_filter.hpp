@@ -15,29 +15,25 @@ class IMaxFilter {
         edge_sample.reserve(sample_size);
         algen::WEdgeList msf;
         std::vector<algen::Weight> jp_weights;
-        std::vector<std::size_t> component_ids;
-        std::vector<std::size_t> jp_nums;
-        JarnikPrim jp;
+        std::vector<std::size_t> jp_nums(num_vertices);
+        JarnikPrim jp(num_vertices);
 
         // MST from sampled edges
         sample_edges(edge_list, edge_sample, sample_size, seed);
-        jp(edge_sample, msf, num_vertices, component_ids, jp_nums, jp_weights);
+        jp.i_max_filter_jarnik_prim(edge_sample, msf, jp_nums, jp_weights);
 
         // RMQ setup
         RangeMaximumQuery<algen::Weight> rmq(jp_weights);
 
         // Filter loop
-        std::copy_if(begin(edge_list),
-                     end(edge_list),
-                     std::back_inserter(msf),
-                     [&rmq, &jp_nums, &component_ids](const auto &e) {
-                         return component_ids[e.tail] != component_ids[e.head] ||
-                                e.weight < rmq.query(jp_nums[e.tail], jp_nums[e.head]);
-                     });
+        std::copy_if(begin(edge_list), end(edge_list), std::back_inserter(msf), [&rmq, &jp_nums, &jp](const auto &e) {
+            return jp.get_component_id(e.tail) != jp.get_component_id(e.head) ||
+                   e.weight < rmq.query(jp_nums[e.tail], jp_nums[e.head]);
+        });
 
         // Final MST
         algen::WEdgeList final_mst;
-        jp(msf, final_mst, num_vertices, component_ids, jp_nums, jp_weights);
+        jp.jarnik_prim(msf, final_mst);
         return final_mst;
     }
 
