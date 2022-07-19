@@ -8,7 +8,14 @@ class JarnikPrim {
 
   public:
     using Edge = std::pair<algen::Weight, algen::VertexId>;
-    using PriorityQueue = std::priority_queue<Edge, std::vector<Edge>, std::greater<Edge>>;
+
+    struct EdgeComparator {
+        bool operator()(const Edge &wv1, const Edge &wv2) {
+            return wv1.first >= wv2.first;
+        }
+    };
+
+    using PriorityQueue = std::priority_queue<Edge, std::vector<Edge>, EdgeComparator>;
     const algen::Weight W_INF = std::numeric_limits<algen::Weight>::max();
     const std::size_t NO_COMPONENT = -1;
 
