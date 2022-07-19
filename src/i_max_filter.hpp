@@ -12,7 +12,7 @@ class IMaxFilter {
         const std::size_t seed = 42;
         const std::size_t sample_size = std::sqrt(edge_list.size() / 2. * num_vertices);
         algen::WEdgeList edge_sample;
-        edge_sample.reserve(sample_size);
+        edge_sample.reserve(sample_size * 1.05);
         algen::WEdgeList msf;
         std::vector<algen::Weight> jp_weights;
         std::vector<std::size_t> jp_nums(num_vertices);
@@ -48,8 +48,8 @@ class IMaxFilter {
         double p = expected_sample_size / (double)n_edges;
         for (std::size_t i = 0; i < edges.size(); i++) {
             if (edges[i].head < edges[i].tail && unif(rng) < p) {
-                out.push_back({edges[i].head, edges[i].tail, edges[i].weight});
-                out.push_back({edges[i].tail, edges[i].head, edges[i].weight});
+                out.emplace_back(edges[i].head, edges[i].tail, edges[i].weight);
+                out.emplace_back(edges[i].tail, edges[i].head, edges[i].weight);
             }
         }
     }
