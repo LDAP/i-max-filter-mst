@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vector>
 #include <numeric>
+#include <vector>
 
 // This implementation of the Union-Find structure is deliberately _very_ bad. It is only here to be used with
 // NaiveKruskal.
@@ -10,9 +10,8 @@ class NaiveUnionFind {
 
     static_assert(std::is_integral_v<T> && std::is_unsigned_v<T>);
 
-public:
-
-    explicit NaiveUnionFind(const T& num_elements) {
+  public:
+    explicit NaiveUnionFind(const T &num_elements) {
         initialize(num_elements);
     }
 
@@ -23,14 +22,13 @@ public:
         return el;
     }
 
-    void do_union(const T& el1, const T& el2) {
+    void do_union(const T &el1, const T &el2) {
         assert(find(el1) != find(el2));
         parent[find(el1)] = find(el2);
     }
 
-private:
-
-    void initialize(const T& num_elements) {
+  private:
+    void initialize(const T &num_elements) {
         parent.resize(num_elements);
         std::iota(parent.begin(), parent.end(), 0);
     }

@@ -10,9 +10,10 @@ class AdjacencyArray {
     using EdgeIterator = std::vector<Edge>::const_iterator;
 
     explicit AdjacencyArray(const algen::WEdgeList &edges, const algen::VertexId num_vertices)
-        : _indices(num_vertices + 1), _edges(edges.size()) {
+        : _indices(num_vertices + 1)
+        , _edges(edges.size()) {
         std::vector<std::size_t> out_degrees(num_vertices + 1);
-        
+
         for (const algen::WEdge &e : edges) {
             out_degrees[e.tail]++;
         }
