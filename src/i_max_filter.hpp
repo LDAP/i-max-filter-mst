@@ -3,9 +3,9 @@
 #include "../includes/definitions.hpp"
 #include "datastructures/range_maximum_query.hpp"
 #include "jarnik_prim.h"
+
 #include <bits/chrono.h>
 #include <chrono>
-
 #include <random>
 
 class IMaxFilter {
@@ -14,7 +14,7 @@ class IMaxFilter {
         const std::size_t seed = 42;
         const std::size_t sample_size = std::sqrt(edge_list.size() / 2. * num_vertices);
         algen::WEdgeList edge_sample;
-        edge_sample.reserve(2 * sample_size * 1.05);
+        edge_sample.reserve(sample_size * 1.05);
         algen::WEdgeList msf;
         std::vector<algen::Weight> jp_weights;
         std::vector<std::size_t> jp_nums(num_vertices);
@@ -22,22 +22,29 @@ class IMaxFilter {
 
         // MST from sampled edges
         sample_edges(edge_list, edge_sample, sample_size, seed);
+        std::cout << sample_size << "\n";
         jp.i_max_filter_jarnik_prim(edge_sample, msf, jp_nums, jp_weights);
 
         // RMQ setup
         auto rmq_buildup_begin = std::chrono::high_resolution_clock::now();
         RangeMaximumQuery<algen::Weight> rmq(jp_weights);
         auto rmq_buildup_end = std::chrono::high_resolution_clock::now();
-        std::cout << "RMQ Buildup: " << std::chrono::duration_cast<std::chrono::microseconds>(rmq_buildup_end - rmq_buildup_begin).count()/1000. << "\n";
+        std::cout << "RMQ Buildup: "
+                  << std::chrono::duration_cast<std::chrono::microseconds>(rmq_buildup_end - rmq_buildup_begin).count() / 1000.
+                  << "\n";
 
         // Filter loop
+        msf.reserve(msf.size() + sample_size);
+        const std::size_t msf_before = msf.size();
         auto filter_begin = std::chrono::high_resolution_clock::now();
         std::copy_if(begin(edge_list), end(edge_list), std::back_inserter(msf), [&rmq, &jp_nums, &jp](const auto &e) {
-            return jp.get_component_id(e.tail) != jp.get_component_id(e.head) ||
-                   e.weight < rmq.query(jp_nums[e.tail], jp_nums[e.head]);
+            return (e.tail < e.head) && (jp.get_component_id(e.tail) != jp.get_component_id(e.head) ||
+                                         e.weight < rmq.query(jp_nums[e.tail], jp_nums[e.head]));
         });
         auto filter_end = std::chrono::high_resolution_clock::now();
-        std::cout << "Filter: " << std::chrono::duration_cast<std::chrono::microseconds>(filter_end - filter_begin).count()/1000. << "\n";
+        std::cout << "Filter: "
+                  << std::chrono::duration_cast<std::chrono::microseconds>(filter_end - filter_begin).count() / 1000.
+                  << " Added " << msf.size() - msf_before << " edges to " << msf_before << "edges\n";
 
         // Final MST
         algen::WEdgeList final_mst;
@@ -56,9 +63,10 @@ class IMaxFilter {
         for (std::size_t i = 0; i < expected_sample_size; i++) {
             const size_t index = unif(rng);
             out.emplace_back(edges[index].head, edges[index].tail, edges[index].weight);
-            out.emplace_back(edges[index].tail, edges[index].head, edges[index].weight);
         }
         auto sample_end = std::chrono::high_resolution_clock::now();
-        std::cout << "Sample Edges: " << std::chrono::duration_cast<std::chrono::microseconds>(sample_end - sample_begin).count()/1000. << "\n";
+        std::cout << "Sample Edges: "
+                  << std::chrono::duration_cast<std::chrono::microseconds>(sample_end - sample_begin).count() / 1000.
+                  << "\n";
     }
 };

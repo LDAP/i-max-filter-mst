@@ -30,8 +30,7 @@ void JarnikPrim::i_max_filter_jarnik_prim_from_node(const algen::VertexId root,
             continue;
 
         // edge selected
-        msf.push_back({vertex_data[current.second].prev, current.second, current.first});
-        msf.push_back({current.second, vertex_data[current.second].prev, current.first});
+        msf.emplace_back(vertex_data[current.second].prev, current.second, current.first);
 
         jp_nums[current.second] = jp_weights.size();
         jp_weights.push_back(current.first);
@@ -63,7 +62,8 @@ void JarnikPrim::i_max_filter_jarnik_prim(const algen::WEdgeList &edge_list,
     auto sample_mst_begin = std::chrono::high_resolution_clock::now();
     prepare();
 
-    const GraphRepresentation graph(edge_list, num_vertices);
+    GraphRepresentation graph;
+    graph.constructFromDirected(edge_list, num_vertices);
 
     msf.reserve(num_vertices);
     jp_weights.reserve(num_vertices);
@@ -73,7 +73,9 @@ void JarnikPrim::i_max_filter_jarnik_prim(const algen::WEdgeList &edge_list,
             i_max_filter_jarnik_prim_from_node(root, graph, jp_nums, jp_weights, msf);
     }
     auto sample_mst_end = std::chrono::high_resolution_clock::now();
-    std::cout << "Sample MST: " << std::chrono::duration_cast<std::chrono::microseconds>(sample_mst_end - sample_mst_begin).count()/1000. << "\n";
+    std::cout << "Sample MST: "
+              << std::chrono::duration_cast<std::chrono::microseconds>(sample_mst_end - sample_mst_begin).count() / 1000.
+              << "\n";
 }
 
 void JarnikPrim::jarnik_prim_from_node(const algen::VertexId root,
@@ -97,8 +99,8 @@ void JarnikPrim::jarnik_prim_from_node(const algen::VertexId root,
             continue;
 
         // edge selected
-        msf.push_back({vertex_data[current.second].prev, current.second, current.first});
-        msf.push_back({current.second, vertex_data[current.second].prev, current.first});
+        msf.emplace_back(vertex_data[current.second].prev, current.second, current.first);
+        msf.emplace_back(current.second, vertex_data[current.second].prev, current.first);
 
         vertex_data[current.second].component_id = root;
 
@@ -123,7 +125,8 @@ void JarnikPrim::jarnik_prim(const algen::WEdgeList &edge_list, algen::WEdgeList
     auto mst_begin = std::chrono::high_resolution_clock::now();
     prepare();
 
-    const GraphRepresentation graph(edge_list, num_vertices);
+    GraphRepresentation graph;
+    graph.constructFromDirected(edge_list, num_vertices);
 
     msf.reserve(num_vertices);
 
@@ -132,5 +135,6 @@ void JarnikPrim::jarnik_prim(const algen::WEdgeList &edge_list, algen::WEdgeList
             jarnik_prim_from_node(root, graph, msf);
     }
     auto mst_end = std::chrono::high_resolution_clock::now();
-    std::cout << "JP MST: " << std::chrono::duration_cast<std::chrono::microseconds>(mst_end - mst_begin).count()/1000. << std::endl;
+    std::cout << "JP MST: " << std::chrono::duration_cast<std::chrono::microseconds>(mst_end - mst_begin).count() / 1000.
+              << std::endl;
 }

@@ -9,9 +9,36 @@ class AdjacencyArray {
     using Edge = std::pair<algen::Weight, NodeHandle>;
     using EdgeIterator = std::vector<Edge>::const_iterator;
 
-    explicit AdjacencyArray(const algen::WEdgeList &edges, const algen::VertexId num_vertices)
-        : _indices(num_vertices + 1)
-        , _edges(edges.size()) {
+    void constructFromDirected(const algen::WEdgeList &edges, const algen::VertexId num_vertices) {
+        _indices.resize(num_vertices + 1);
+        _edges.resize(2 * edges.size());
+        auto adj_begin = std::chrono::high_resolution_clock::now();
+        std::vector<std::size_t> out_degrees(num_vertices + 1);
+
+        for (const algen::WEdge &e : edges) {
+            out_degrees[e.tail]++;
+            out_degrees[e.head]++;
+        }
+
+        std::size_t sum = 0;
+        for (std::size_t i = 0; i < num_vertices + 1; i++) {
+            _indices[i] = sum;
+            sum += out_degrees[i];
+        }
+
+        for (const algen::WEdge &e : edges) {
+            _edges[_indices[e.tail] + --out_degrees[e.tail]] = {e.weight, e.head};
+            _edges[_indices[e.head] + --out_degrees[e.head]] = {e.weight, e.tail};
+        }
+        auto adj_end = std::chrono::high_resolution_clock::now();
+        std::cout << "Graph Buildup Directed: "
+                  << std::chrono::duration_cast<std::chrono::microseconds>(adj_end - adj_begin).count() / 1000.
+                  << std::endl;
+    }
+
+    void constructFromUndirected(const algen::WEdgeList &edges, const algen::VertexId num_vertices) {
+        _indices.resize(num_vertices + 1);
+        _edges.resize(edges.size());
         auto adj_begin = std::chrono::high_resolution_clock::now();
         std::vector<std::size_t> out_degrees(num_vertices + 1);
 
@@ -29,7 +56,9 @@ class AdjacencyArray {
             _edges[_indices[e.tail] + --out_degrees[e.tail]] = {e.weight, e.head};
         }
         auto adj_end = std::chrono::high_resolution_clock::now();
-        std::cout << "Graph Buildup: " << std::chrono::duration_cast<std::chrono::microseconds>(adj_end - adj_begin).count()/1000. << std::endl;
+        std::cout << "Graph Buildup Undirected: "
+                  << std::chrono::duration_cast<std::chrono::microseconds>(adj_end - adj_begin).count() / 1000.
+                  << std::endl;
     }
 
     EdgeIterator beginEdges(const algen::VertexId v) const {
