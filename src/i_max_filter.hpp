@@ -3,9 +3,7 @@
 #include "../includes/definitions.hpp"
 #include "datastructures/range_maximum_query.hpp"
 #include "jarnik_prim.h"
-#include "random.hpp"
 
-#include <bits/chrono.h>
 #include <chrono>
 
 class IMaxFilter {
@@ -63,8 +61,8 @@ class IMaxFilter {
                       const std::size_t expected_sample_size,
                       const std::size_t seed) {
         auto sample_begin = std::chrono::high_resolution_clock::now();
-        for (std::size_t i = 0; i < expected_sample_size; i++) {
-            out.emplace_back(edges[uniform_int() % edges.size()]);
+        for (std::size_t i = 0; i < edges.size(); i += edges.size() / expected_sample_size) {
+            out.emplace_back(edges[i]);
         }
         auto sample_end = std::chrono::high_resolution_clock::now();
         std::cout << "Sample Edges: "
