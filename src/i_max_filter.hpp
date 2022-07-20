@@ -14,7 +14,7 @@ class IMaxFilter {
         const std::size_t seed = 42;
         const std::size_t sample_size = std::sqrt(edge_list.size() / 2. * num_vertices);
         algen::WEdgeList edge_sample;
-        edge_sample.reserve(sample_size * 1.05);
+        edge_sample.reserve(2 * sample_size * 1.05);
         algen::WEdgeList msf;
         std::vector<algen::Weight> jp_weights;
         std::vector<std::size_t> jp_nums(num_vertices);
@@ -50,16 +50,13 @@ class IMaxFilter {
                       const std::size_t expected_sample_size,
                       const std::size_t seed) {
         std::mt19937 rng(seed);
-        std::uniform_real_distribution<double> unif(0, 1);
+        std::uniform_int_distribution<std::size_t> unif(0, edges.size() - 1);
 
-        std::size_t n_edges = edges.size() / 2;
-        double p = expected_sample_size / (double)n_edges;
         auto sample_begin = std::chrono::high_resolution_clock::now();
-        for (std::size_t i = 0; i < edges.size(); i++) {
-            if (edges[i].head < edges[i].tail && unif(rng) < p) {
-                out.emplace_back(edges[i].head, edges[i].tail, edges[i].weight);
-                out.emplace_back(edges[i].tail, edges[i].head, edges[i].weight);
-            }
+        for (std::size_t i = 0; i < expected_sample_size; i++) {
+            const size_t index = unif(rng);
+            out.emplace_back(edges[index].head, edges[index].tail, edges[index].weight);
+            out.emplace_back(edges[index].tail, edges[index].head, edges[index].weight);
         }
         auto sample_end = std::chrono::high_resolution_clock::now();
         std::cout << "Sample Edges: " << std::chrono::duration_cast<std::chrono::microseconds>(sample_end - sample_begin).count()/1000. << "\n";
