@@ -9,7 +9,8 @@ class AdjacencyArray {
     using Edge = std::pair<algen::Weight, NodeHandle>;
     using EdgeIterator = std::vector<Edge>::const_iterator;
 
-    void constructFromDirected(const algen::WEdgeList &edges, const algen::VertexId num_vertices) {
+    /* Expects edges only in one direction */
+    void constructFromUndirected(const algen::WEdgeList &edges, const algen::VertexId num_vertices) {
         _indices.resize(num_vertices + 1);
         _edges.resize(2 * edges.size());
         auto adj_begin = std::chrono::high_resolution_clock::now();
@@ -31,12 +32,13 @@ class AdjacencyArray {
             _edges[_indices[e.head] + --out_degrees[e.head]] = {e.weight, e.tail};
         }
         auto adj_end = std::chrono::high_resolution_clock::now();
-        std::cout << "Graph Buildup Directed: "
+        std::cout << "Graph Buildup Undirected: "
                   << std::chrono::duration_cast<std::chrono::microseconds>(adj_end - adj_begin).count() / 1000.
                   << std::endl;
     }
 
-    void constructFromUndirected(const algen::WEdgeList &edges, const algen::VertexId num_vertices) {
+    /* Expects edges in both directions (edges.size() == 2 * m) */
+    void constructFromDirected(const algen::WEdgeList &edges, const algen::VertexId num_vertices) {
         _indices.resize(num_vertices + 1);
         _edges.resize(edges.size());
         auto adj_begin = std::chrono::high_resolution_clock::now();
@@ -56,7 +58,7 @@ class AdjacencyArray {
             _edges[_indices[e.tail] + --out_degrees[e.tail]] = {e.weight, e.head};
         }
         auto adj_end = std::chrono::high_resolution_clock::now();
-        std::cout << "Graph Buildup Undirected: "
+        std::cout << "Graph Buildup Directed: "
                   << std::chrono::duration_cast<std::chrono::microseconds>(adj_end - adj_begin).count() / 1000.
                   << std::endl;
     }

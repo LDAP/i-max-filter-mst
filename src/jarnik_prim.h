@@ -53,9 +53,9 @@ class JarnikPrim {
     }
 
   public:
-    void jarnik_prim(const algen::WEdgeList &edge_list, algen::WEdgeList &msf);
+    void jarnik_prim(const JarnikPrim::GraphRepresentation &graph, algen::WEdgeList &msf);
 
-    void i_max_filter_jarnik_prim(const algen::WEdgeList &edge_list,
+    void i_max_filter_jarnik_prim(const JarnikPrim::GraphRepresentation &graph,
                                   algen::WEdgeList &msf,
                                   std::vector<std::size_t> &jp_nums,
                                   std::vector<algen::Weight> &jp_weights);
@@ -66,7 +66,9 @@ class JarnikPrim {
 
     algen::WEdgeList operator()(const algen::WEdgeList &edge_list, const algen::VertexId) {
         algen::WEdgeList result;
-        jarnik_prim(edge_list, result);
+        GraphRepresentation graph;
+        graph.constructFromDirected(edge_list, num_vertices);
+        jarnik_prim(graph, result);
         return result;
     }
 

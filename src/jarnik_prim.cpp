@@ -47,7 +47,7 @@ void JarnikPrim::i_max_filter_jarnik_prim_from_node(const algen::VertexId root,
     }
 }
 
-void JarnikPrim::i_max_filter_jarnik_prim(const algen::WEdgeList &edge_list,
+void JarnikPrim::i_max_filter_jarnik_prim(const JarnikPrim::GraphRepresentation &graph,
                                           algen::WEdgeList &msf,
                                           std::vector<std::size_t> &jp_nums,
                                           std::vector<algen::Weight> &jp_weights) {
@@ -61,9 +61,6 @@ void JarnikPrim::i_max_filter_jarnik_prim(const algen::WEdgeList &edge_list,
 
     auto sample_mst_begin = std::chrono::high_resolution_clock::now();
     prepare();
-
-    GraphRepresentation graph;
-    graph.constructFromDirected(edge_list, num_vertices);
 
     msf.reserve(num_vertices);
     jp_weights.reserve(num_vertices);
@@ -115,7 +112,7 @@ void JarnikPrim::jarnik_prim_from_node(const algen::VertexId root,
     }
 }
 
-void JarnikPrim::jarnik_prim(const algen::WEdgeList &edge_list, algen::WEdgeList &msf) {
+void JarnikPrim::jarnik_prim(const JarnikPrim::GraphRepresentation &graph, algen::WEdgeList &msf) {
     assert(msf.size() == 0);
     assert(std::all_of(vertex_data, vertex_data + num_vertices, [&](VertexData const &e) {
         return e.best_weight == DEFAULT_VERTEX_DATA.best_weight && e.component_id == DEFAULT_VERTEX_DATA.component_id &&
@@ -124,9 +121,6 @@ void JarnikPrim::jarnik_prim(const algen::WEdgeList &edge_list, algen::WEdgeList
 
     auto mst_begin = std::chrono::high_resolution_clock::now();
     prepare();
-
-    GraphRepresentation graph;
-    graph.constructFromDirected(edge_list, num_vertices);
 
     msf.reserve(num_vertices);
 

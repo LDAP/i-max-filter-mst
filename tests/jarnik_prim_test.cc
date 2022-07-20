@@ -20,7 +20,9 @@ TEST(JarnikPrimTests, mst_correctness) {
     edges.emplace_back(2, 5, 5);
     JarnikPrim jp(num_vertices);
     algen::WEdgeList mst;
-    jp.jarnik_prim(edges, mst);
+    AdjacencyArray adj_arr;
+    adj_arr.constructFromUndirected(edges, num_vertices);
+    jp.jarnik_prim(adj_arr, mst);
 
     algen::WEdgeList correct_mst;
     correct_mst.emplace_back(0, 2, 1);
@@ -60,7 +62,9 @@ TEST(JarnikPrimTests, msf_correctness) {
 
     JarnikPrim jp(num_vertices);
     algen::WEdgeList mst;
-    jp.jarnik_prim(edges, mst);
+    AdjacencyArray adj_arr;
+    adj_arr.constructFromUndirected(edges, num_vertices);
+    jp.jarnik_prim(adj_arr, mst);
 
     algen::WEdgeList correct_mst;
     correct_mst.emplace_back(0, 2, 1);
@@ -99,7 +103,9 @@ TEST(JarnikPrimTests, generator_correctness) {
     const std::size_t num_vertices = 1ull << log_n;
     const auto mst_org = fast_kruskal(gen_edges, 1ull << log_n);
     algen::WEdgeList mst_jp;
-    JarnikPrim(num_vertices).jarnik_prim(gen_edges, mst_jp);
+    AdjacencyArray adj_arr;
+    adj_arr.constructFromUndirected(gen_edges, num_vertices);
+    JarnikPrim(num_vertices).jarnik_prim(adj_arr, mst_jp);
     ASSERT_EQ(algen::sum_weights(mst_org), algen::sum_weights(mst_jp));
 };
 
@@ -113,7 +119,9 @@ TEST(JarnikPrimTests, time) {
 
     const std::size_t num_vertices = 1ull << log_n;
     algen::WEdgeList mst_jp;
-    JarnikPrim(num_vertices).jarnik_prim(gen_edges, mst_jp);
+    AdjacencyArray adj_arr;
+    adj_arr.constructFromUndirected(gen_edges, num_vertices);
+    JarnikPrim(num_vertices).jarnik_prim(adj_arr, mst_jp);
 
     FAIL();
 };
@@ -132,7 +140,9 @@ TEST(IMaxJarnikPrimTests, mst_correctness) {
     algen::WEdgeList mst;
     std::vector<std::size_t> jp_nums(num_vertices, -1);
     std::vector<algen::Weight> jp_weights;
-    jp.i_max_filter_jarnik_prim(edges, mst, jp_nums, jp_weights);
+    AdjacencyArray adj_arr;
+    adj_arr.constructFromUndirected(edges, num_vertices);
+    jp.i_max_filter_jarnik_prim(adj_arr, mst, jp_nums, jp_weights);
 
     algen::WEdgeList correct_mst;
     correct_mst.emplace_back(0, 2, 1);
@@ -169,7 +179,9 @@ TEST(IMaxJarnikPrimTests, msf_correctness) {
     algen::WEdgeList mst;
     std::vector<std::size_t> jp_nums(num_vertices, -1);
     std::vector<algen::Weight> jp_weights;
-    jp.i_max_filter_jarnik_prim(edges, mst, jp_nums, jp_weights);
+    AdjacencyArray adj_arr;
+    adj_arr.constructFromUndirected(edges, num_vertices);
+    jp.i_max_filter_jarnik_prim(adj_arr, mst, jp_nums, jp_weights);
 
     algen::WEdgeList correct_mst;
     correct_mst.emplace_back(0, 2, 1);
