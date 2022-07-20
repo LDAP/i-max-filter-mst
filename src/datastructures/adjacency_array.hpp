@@ -12,6 +12,7 @@ class AdjacencyArray {
     explicit AdjacencyArray(const algen::WEdgeList &edges, const algen::VertexId num_vertices)
         : _indices(num_vertices + 1)
         , _edges(edges.size()) {
+        auto adj_begin = std::chrono::high_resolution_clock::now();
         std::vector<std::size_t> out_degrees(num_vertices + 1);
 
         for (const algen::WEdge &e : edges) {
@@ -27,6 +28,8 @@ class AdjacencyArray {
         for (const algen::WEdge &e : edges) {
             _edges[_indices[e.tail] + --out_degrees[e.tail]] = {e.weight, e.head};
         }
+        auto adj_end = std::chrono::high_resolution_clock::now();
+        std::cout << "Graph Buildup: " << std::chrono::duration_cast<std::chrono::microseconds>(adj_end - adj_begin).count()/1000. << std::endl;
     }
 
     EdgeIterator beginEdges(const algen::VertexId v) const {
