@@ -65,7 +65,7 @@ class RangeMaximumQuery {
      * @return     max(min(i,j)...max(i,j))
      */
     T query(std::size_t i, std::size_t j) const {
-        const std::size_t level = std::__lg(i ^ j);
+        const unsigned int level = std::__lg(i ^ j);
         return std::max(levels[level * level_size + i], levels[level * level_size + j]);
     }
 
