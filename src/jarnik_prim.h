@@ -20,20 +20,18 @@ class JarnikPrim {
     struct VertexData {
         algen::VertexId prev;
         algen::Weight best_weight;
-        bool visited;
     };
 
     using PriorityQueue = IndexedPriorityQueue<algen::VertexId, algen::Weight, std::greater<>>;
     const algen::Weight W_INF = std::numeric_limits<algen::Weight>::max();
-    const std::size_t NO_COMPONENT = -1;
-    const VertexData DEFAULT_VERTEX_DATA = VertexData{(algen::VertexId)-1, W_INF, false};
+    const VertexData DEFAULT_VERTEX_DATA = VertexData{(algen::VertexId)-1, W_INF};
 
     using GraphRepresentation = AdjacencyArray;
 
     JarnikPrim(const std::size_t num_vertices)
         : num_vertices(num_vertices)
         , vertex_data(new VertexData[num_vertices])
-        , pq(num_vertices){}
+        , pq(num_vertices) {}
 
     ~JarnikPrim() {
         delete[] vertex_data;
@@ -53,6 +51,7 @@ class JarnikPrim {
 
     void prepare() {
         std::fill(vertex_data, vertex_data + num_vertices, DEFAULT_VERTEX_DATA);
+        visited.assign(num_vertices, false);
     }
 
   public:
@@ -75,4 +74,5 @@ class JarnikPrim {
     const std::size_t num_vertices;
     VertexData *const vertex_data;
     PriorityQueue pq;
+    std::vector<bool> visited;
 };
