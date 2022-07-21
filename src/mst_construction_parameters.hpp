@@ -99,8 +99,8 @@ struct Experiment {
 };
 
 struct ExperimentSuite {
-  std::size_t log_n_begin = 12;
-  std::size_t log_n_end = 15;
+  std::size_t log_n_begin = 13;
+  std::size_t log_n_end = 16;
   std::size_t edge_factor_begin = 1;
   std::size_t edge_factor_end = 2048;
   algen::Weight max_weight = 255;
