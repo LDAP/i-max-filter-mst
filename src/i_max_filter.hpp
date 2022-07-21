@@ -18,7 +18,7 @@ class IMaxFilter {
         JarnikPrim jp(num_vertices);
 
         // MST from sampled edges
-        sample_edges(edge_list, edges, sample_size, seed);
+        sample_edges(edge_list, edges, sample_size);
         std::cout << sample_size << " " << edges.size() << "\n";
 
         AdjacencyArray adj_arr;
@@ -57,8 +57,7 @@ class IMaxFilter {
 
     void sample_edges(const algen::WEdgeList &edges,
                       algen::WEdgeList &out,
-                      const std::size_t expected_sample_size,
-                      const std::size_t seed) {
+                      const std::size_t expected_sample_size) {
         auto sample_begin = std::chrono::high_resolution_clock::now();
         for (std::size_t i = 0; i < edges.size(); i += edges.size() / expected_sample_size) {
             out.emplace_back(edges[i]);
