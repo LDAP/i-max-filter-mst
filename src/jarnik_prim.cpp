@@ -62,7 +62,6 @@ void JarnikPrim::i_max_filter_jarnik_prim(const JarnikPrim::GraphRepresentation 
                e.prev == DEFAULT_VERTEX_DATA.prev;
     }));
 
-    auto sample_mst_begin = std::chrono::high_resolution_clock::now();
     prepare();
 
     msf.reserve(num_vertices);
@@ -72,10 +71,6 @@ void JarnikPrim::i_max_filter_jarnik_prim(const JarnikPrim::GraphRepresentation 
         if (vertex_data[root].best_weight == W_INF)
             i_max_filter_jarnik_prim_from_node(root, graph, jp_nums, jp_weights, msf);
     }
-    auto sample_mst_end = std::chrono::high_resolution_clock::now();
-    std::cout << "Sample MST: "
-              << std::chrono::duration_cast<std::chrono::microseconds>(sample_mst_end - sample_mst_begin).count() / 1000.
-              << "\n";
 }
 
 void JarnikPrim::jarnik_prim_from_node(const algen::VertexId root,
@@ -124,7 +119,6 @@ void JarnikPrim::jarnik_prim(const JarnikPrim::GraphRepresentation &graph, algen
                e.prev == DEFAULT_VERTEX_DATA.prev;
     }));
 
-    auto mst_begin = std::chrono::high_resolution_clock::now();
     prepare();
 
     msf.reserve(num_vertices);
@@ -133,7 +127,4 @@ void JarnikPrim::jarnik_prim(const JarnikPrim::GraphRepresentation &graph, algen
         if (vertex_data[root].best_weight == W_INF)
             jarnik_prim_from_node(root, graph, msf);
     }
-    auto mst_end = std::chrono::high_resolution_clock::now();
-    std::cout << "JP MST: " << std::chrono::duration_cast<std::chrono::microseconds>(mst_end - mst_begin).count() / 1000.
-              << std::endl;
 }
