@@ -14,55 +14,67 @@
  *
  * NOTE: This is a max-heap, i.e., top() is the largest element in the queue.
  */
-template <class K, class V, class Comp = std::less<>>
+template<class K, class V, class Comp = std::less<>>
 class IndexedPriorityQueue {
- public:
+  public:
     /**
      * (Default) constructor.
      * capacity is the maximum number of keys that can be inserted.
      */
-    IndexedPriorityQueue(std::size_t capacity = 0, Comp comp = {})
-            : index_(capacity), comp_(std::move(comp)) {}
+    IndexedPriorityQueue(std::size_t capacity = 0, Comp comp = {}) : index_(capacity), comp_(std::move(comp)) {}
 
     /**
      * Returns the maximum number of keys that can be inserted.
      */
-    std::size_t capacity() const { return index_.size(); }
+    std::size_t capacity() const {
+        return index_.size();
+    }
 
     /**
      * Increases the maximum number of keys that can be inserted.
      */
     void reserve(std::size_t capacity) {
-        if (capacity > index_.size()) index_.resize(capacity);
+        if (capacity > index_.size())
+            index_.resize(capacity);
     }
 
     /**
      * Returns true if the queue contains no elements.
      */
-    bool empty() const { return heap_.size() == 1; }
+    bool empty() const {
+        return heap_.size() == 1;
+    }
 
     /**
      * Returns the number of elements in the queue.
      */
-    std::size_t size() const { return heap_.size() - 1; }
+    std::size_t size() const {
+        return heap_.size() - 1;
+    }
 
 
     /**
      * Returns the largest element in the queue.
      * The queue must not be empty.
      */
-    const std::pair<K, V>& top() const { return heap_[1]; }
+    const std::pair<K, V> &top() const {
+        return heap_[1];
+    }
 
     /**
      * Returns true if the given key exists in the queue.
      */
-    bool hasKey(K key) const { return index_[key] != 0; }
+    bool hasKey(K key) const {
+        return index_[key] != 0;
+    }
 
     /**
      * Returns the priority for the given key.
      * The key must exist in the queue.
      */
-    const V& priority(K key) const { return heap_[index_[key]].second; }
+    const V &priority(K key) const {
+        return heap_[index_[key]].second;
+    }
 
 
     /**
@@ -115,7 +127,7 @@ class IndexedPriorityQueue {
         std::fill(index_.begin(), index_.end(), 0);
     }
 
- private:
+  private:
     // the heap, indexing starts at 1, index 0 is unused
     std::vector<std::pair<K, V>> heap_{1};
     // mapping from keys to indices in the heap
@@ -123,7 +135,7 @@ class IndexedPriorityQueue {
     Comp comp_;
 
     // performs sift-up of (key, value) starting at index i
-    void siftUp(std::size_t i, K key, V&& value) {
+    void siftUp(std::size_t i, K key, V &&value) {
         std::size_t parent = i / 2;
 
         // move hole upwards until correct position found
@@ -139,16 +151,18 @@ class IndexedPriorityQueue {
     }
 
     // performs sift-down of (key, value), starting at index 1
-    void siftDown(std::size_t i, K key, V&& value) {
+    void siftDown(std::size_t i, K key, V &&value) {
         std::size_t child = i * 2;
 
         const auto end = heap_.size() - 1;
         while (child < end) {
             // choose larger child
-            if (comp_(heap_[child].second, heap_[child + 1].second)) ++child;
+            if (comp_(heap_[child].second, heap_[child + 1].second))
+                ++child;
 
             // stop if correct position found
-            if (!comp_(value, heap_[child].second)) break;
+            if (!comp_(value, heap_[child].second))
+                break;
 
             // move hole downwards
             heap_[i] = std::move(heap_[child]);

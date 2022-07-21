@@ -33,7 +33,7 @@ class JarnikPrim {
     JarnikPrim(const std::size_t num_vertices)
         : num_vertices(num_vertices)
         , vertex_data(new VertexData[num_vertices])
-        , pq(num_vertices){}
+        , pq(num_vertices) {}
 
     ~JarnikPrim() {
         delete[] vertex_data;
