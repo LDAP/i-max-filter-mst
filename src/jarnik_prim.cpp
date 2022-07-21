@@ -13,7 +13,7 @@ void JarnikPrim::i_max_filter_jarnik_prim_from_node(const algen::VertexId root,
 
     // prepare algorithm by "visiting" root
     vertex_data[root].best_weight = 0;
-    visited[root] = true;
+    vertex_data[root].visited = true;
     jp_nums[root] = jp_weights.size();
     jp_weights.push_back(W_INF);
     for (auto it = graph.beginEdges(root); it != graph.endEdges(root); ++it) {
@@ -25,9 +25,9 @@ void JarnikPrim::i_max_filter_jarnik_prim_from_node(const algen::VertexId root,
     while (!pq.empty()) {
         auto [u, w] = std::move(pq.pop()); // weight, vertexid
 
-        if (visited[u])
+        if (vertex_data[u].visited)
             continue;
-        visited[u] = true;
+        vertex_data[u].visited = true;
 
         // edge selected
         msf.emplace_back(vertex_data[u].prev, u, w);
@@ -37,7 +37,7 @@ void JarnikPrim::i_max_filter_jarnik_prim_from_node(const algen::VertexId root,
 
         // check out neighbors of node at other end
         for (auto it = graph.beginEdges(u); it != graph.endEdges(u); ++it) {
-            if (!visited[it->second] && it->first < vertex_data[it->second].best_weight) {
+            if (!vertex_data[it->second].visited && it->first < vertex_data[it->second].best_weight) {
                 vertex_data[it->second].best_weight = it->first;
                 vertex_data[it->second].prev = u;
                 pq.pushOrChangePriority(it->second, it->first);
@@ -90,9 +90,9 @@ void JarnikPrim::jarnik_prim_from_node(const algen::VertexId root,
     while (!pq.empty()) {
         auto [u, w] = std::move(pq.pop()); // weight, vertexid
 
-        if (visited[u])
+        if (vertex_data[u].visited)
             continue;
-        visited[u] = true;
+        vertex_data[u].visited = true;
 
         // edge selected
         msf.emplace_back(vertex_data[u].prev, u, w);
@@ -101,7 +101,7 @@ void JarnikPrim::jarnik_prim_from_node(const algen::VertexId root,
 
         // check out neighbors of node at other end
         for (auto it = graph.beginEdges(u); it != graph.endEdges(u); ++it) {
-            if (!visited[it->second] && it->first < vertex_data[it->second].best_weight) {
+            if (!vertex_data[it->second].visited && it->first < vertex_data[it->second].best_weight) {
                 vertex_data[it->second].best_weight = it->first;
                 vertex_data[it->second].prev = u;
                 pq.pushOrChangePriority(it->second, it->first);
