@@ -104,7 +104,7 @@ TEST(JarnikPrimTests, generator_correctness) {
     const auto mst_org = fast_kruskal(gen_edges, 1ull << log_n);
     algen::WEdgeList mst_jp;
     AdjacencyArray adj_arr;
-    adj_arr.constructFromUndirected(gen_edges, num_vertices);
+    adj_arr.constructFromDirected(gen_edges, num_vertices);
     JarnikPrim(num_vertices).jarnik_prim(adj_arr, mst_jp);
     ASSERT_EQ(algen::sum_weights(mst_org), algen::sum_weights(mst_jp));
 };
