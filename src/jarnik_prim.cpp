@@ -23,24 +23,24 @@ void JarnikPrim::i_max_filter_jarnik_prim_from_node(const algen::VertexId root,
     }
 
     while (!pq.empty()) {
-        JarnikPrim::GraphRepresentation::Edge current = pq.top(); // weight, vertexid
+        auto [w, u] = pq.top(); // weight, vertexid
         pq.pop();
 
-        if (vertex_data[current.second].visited)
+        if (vertex_data[u].visited)
             continue;
-        vertex_data[current.second].visited = true;
+        vertex_data[u].visited = true;
 
         // edge selected
-        msf.emplace_back(vertex_data[current.second].prev, current.second, current.first);
+        msf.emplace_back(vertex_data[u].prev, u, w);
 
-        jp_nums[current.second] = jp_weights.size();
-        jp_weights.push_back(current.first);
+        jp_nums[u] = jp_weights.size();
+        jp_weights.push_back(w);
 
         // check out neighbors of node at other end
-        for (auto it = graph.beginEdges(current.second); it != graph.endEdges(current.second); ++it) {
+        for (auto it = graph.beginEdges(u); it != graph.endEdges(u); ++it) {
             if (!vertex_data[it->second].visited && it->first < vertex_data[it->second].best_weight) {
                 vertex_data[it->second].best_weight = it->first;
-                vertex_data[it->second].prev = current.second;
+                vertex_data[it->second].prev = u;
                 pq.push(*it);
             }
         }
@@ -89,23 +89,23 @@ void JarnikPrim::jarnik_prim_from_node(const algen::VertexId root,
     }
 
     while (!pq.empty()) {
-        JarnikPrim::GraphRepresentation::Edge current = pq.top(); // weight, vertexid
+        auto [w, u] = pq.top(); // weight, vertexid
         pq.pop();
 
-        if (vertex_data[current.second].visited)
+        if (vertex_data[u].visited)
             continue;
-        vertex_data[current.second].visited = true;
+        vertex_data[u].visited = true;
 
         // edge selected
-        msf.emplace_back(vertex_data[current.second].prev, current.second, current.first);
-        msf.emplace_back(current.second, vertex_data[current.second].prev, current.first);
+        msf.emplace_back(vertex_data[u].prev, u, w);
+        msf.emplace_back(u, vertex_data[u].prev, w);
 
 
         // check out neighbors of node at other end
-        for (auto it = graph.beginEdges(current.second); it != graph.endEdges(current.second); ++it) {
+        for (auto it = graph.beginEdges(u); it != graph.endEdges(u); ++it) {
             if (!vertex_data[it->second].visited && it->first < vertex_data[it->second].best_weight) {
                 vertex_data[it->second].best_weight = it->first;
-                vertex_data[it->second].prev = current.second;
+                vertex_data[it->second].prev = u;
                 pq.push(*it);
             }
         }
