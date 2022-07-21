@@ -39,9 +39,8 @@ class IMaxFilter {
         edges.reserve(edges.size() + sample_size);
 
         auto filter_begin = std::chrono::high_resolution_clock::now();
-        std::copy_if(begin(edge_list), end(edge_list), std::back_inserter(edges), [&rmq, &jp_nums, &jp](const auto &e) {
-            return (e.tail < e.head) && (jp.get_component_id(e.tail) != jp.get_component_id(e.head) ||
-                                         e.weight < rmq.query(jp_nums[e.tail], jp_nums[e.head]));
+        std::copy_if(begin(edge_list), end(edge_list), std::back_inserter(edges), [&rmq, &jp_nums](const auto &e) {
+            return (e.tail < e.head) && e.weight < rmq.query(jp_nums[e.tail], jp_nums[e.head]);
         });
         auto filter_end = std::chrono::high_resolution_clock::now();
         std::cout << "Filter: "

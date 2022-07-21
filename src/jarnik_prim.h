@@ -18,13 +18,13 @@ class JarnikPrim {
     struct VertexData {
         algen::VertexId prev;
         algen::Weight best_weight;
-        std::size_t component_id;
+        bool visited;
     };
 
     using PriorityQueue = std::priority_queue<Edge, std::vector<Edge>, EdgeComparator>;
     const algen::Weight W_INF = std::numeric_limits<algen::Weight>::max();
     const std::size_t NO_COMPONENT = -1;
-    const VertexData DEFAULT_VERTEX_DATA = VertexData{(algen::VertexId)-1, W_INF, NO_COMPONENT};
+    const VertexData DEFAULT_VERTEX_DATA = VertexData{(algen::VertexId)-1, W_INF, false};
 
     using GraphRepresentation = AdjacencyArray;
 
@@ -59,10 +59,6 @@ class JarnikPrim {
                                   algen::WEdgeList &msf,
                                   std::vector<std::size_t> &jp_nums,
                                   std::vector<algen::Weight> &jp_weights);
-
-    std::size_t get_component_id(algen::VertexId vertexId) {
-        return vertex_data[vertexId].component_id;
-    }
 
     algen::WEdgeList operator()(const algen::WEdgeList &edge_list, const algen::VertexId) {
         algen::WEdgeList result;

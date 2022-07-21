@@ -13,9 +13,9 @@ void JarnikPrim::i_max_filter_jarnik_prim_from_node(const algen::VertexId root,
 
     // prepare algorithm by "visiting" root
     vertex_data[root].best_weight = 0;
-    vertex_data[root].component_id = root;
+    vertex_data[root].visited = true;
     jp_nums[root] = jp_weights.size();
-    jp_weights.push_back(0);
+    jp_weights.push_back(W_INF);
     for (auto it = graph.beginEdges(root); it != graph.endEdges(root); ++it) {
         vertex_data[it->second].best_weight = it->first;
         vertex_data[it->second].prev = root;
@@ -26,19 +26,19 @@ void JarnikPrim::i_max_filter_jarnik_prim_from_node(const algen::VertexId root,
         JarnikPrim::GraphRepresentation::Edge current = pq.top(); // weight, vertexid
         pq.pop();
 
-        if (vertex_data[current.second].component_id != NO_COMPONENT)
+        if (vertex_data[current.second].visited)
             continue;
+        vertex_data[current.second].visited = true;
 
         // edge selected
         msf.emplace_back(vertex_data[current.second].prev, current.second, current.first);
 
         jp_nums[current.second] = jp_weights.size();
         jp_weights.push_back(current.first);
-        vertex_data[current.second].component_id = root;
 
         // check out neighbors of node at other end
         for (auto it = graph.beginEdges(current.second); it != graph.endEdges(current.second); ++it) {
-            if (vertex_data[it->second].component_id == NO_COMPONENT && it->first < vertex_data[it->second].best_weight) {
+            if (!vertex_data[it->second].visited && it->first < vertex_data[it->second].best_weight) {
                 vertex_data[it->second].best_weight = it->first;
                 vertex_data[it->second].prev = current.second;
                 pq.push(*it);
@@ -55,7 +55,7 @@ void JarnikPrim::i_max_filter_jarnik_prim(const JarnikPrim::GraphRepresentation 
     assert(jp_nums.size() == num_vertices);
     assert(jp_weights.size() == 0);
     assert(std::all_of(vertex_data, vertex_data + num_vertices, [&](VertexData const &e) {
-        return e.best_weight == DEFAULT_VERTEX_DATA.best_weight && e.component_id == DEFAULT_VERTEX_DATA.component_id &&
+        return e.best_weight == DEFAULT_VERTEX_DATA.best_weight && e.visited == DEFAULT_VERTEX_DATA.visited &&
                e.prev == DEFAULT_VERTEX_DATA.prev;
     }));
 
@@ -92,18 +92,18 @@ void JarnikPrim::jarnik_prim_from_node(const algen::VertexId root,
         JarnikPrim::GraphRepresentation::Edge current = pq.top(); // weight, vertexid
         pq.pop();
 
-        if (vertex_data[current.second].component_id != NO_COMPONENT)
+        if (vertex_data[current.second].visited)
             continue;
+        vertex_data[current.second].visited = true;
 
         // edge selected
         msf.emplace_back(vertex_data[current.second].prev, current.second, current.first);
         msf.emplace_back(current.second, vertex_data[current.second].prev, current.first);
 
-        vertex_data[current.second].component_id = root;
 
         // check out neighbors of node at other end
         for (auto it = graph.beginEdges(current.second); it != graph.endEdges(current.second); ++it) {
-            if (vertex_data[it->second].component_id == NO_COMPONENT && it->first < vertex_data[it->second].best_weight) {
+            if (!vertex_data[it->second].visited && it->first < vertex_data[it->second].best_weight) {
                 vertex_data[it->second].best_weight = it->first;
                 vertex_data[it->second].prev = current.second;
                 pq.push(*it);
@@ -115,7 +115,7 @@ void JarnikPrim::jarnik_prim_from_node(const algen::VertexId root,
 void JarnikPrim::jarnik_prim(const JarnikPrim::GraphRepresentation &graph, algen::WEdgeList &msf) {
     assert(msf.size() == 0);
     assert(std::all_of(vertex_data, vertex_data + num_vertices, [&](VertexData const &e) {
-        return e.best_weight == DEFAULT_VERTEX_DATA.best_weight && e.component_id == DEFAULT_VERTEX_DATA.component_id &&
+        return e.best_weight == DEFAULT_VERTEX_DATA.best_weight && e.visited == DEFAULT_VERTEX_DATA.visited &&
                e.prev == DEFAULT_VERTEX_DATA.prev;
     }));
 
