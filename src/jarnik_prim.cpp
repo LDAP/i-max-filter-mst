@@ -19,12 +19,11 @@ void JarnikPrim::i_max_filter_jarnik_prim_from_node(const algen::VertexId root,
     for (auto it = graph.beginEdges(root); it != graph.endEdges(root); ++it) {
         vertex_data[it->second].best_weight = it->first;
         vertex_data[it->second].prev = root;
-        pq.push(*it);
+        pq.pushOrChangePriority(it->second, it->first);
     }
 
     while (!pq.empty()) {
-        auto [w, u] = pq.top(); // weight, vertexid
-        pq.pop();
+        auto [u, w] = std::move(pq.pop()); // weight, vertexid
 
         if (vertex_data[u].visited)
             continue;
@@ -41,7 +40,7 @@ void JarnikPrim::i_max_filter_jarnik_prim_from_node(const algen::VertexId root,
             if (!vertex_data[it->second].visited && it->first < vertex_data[it->second].best_weight) {
                 vertex_data[it->second].best_weight = it->first;
                 vertex_data[it->second].prev = u;
-                pq.push(*it);
+                pq.pushOrChangePriority(it->second, it->first);
             }
         }
     }
@@ -85,12 +84,11 @@ void JarnikPrim::jarnik_prim_from_node(const algen::VertexId root,
     for (auto it = graph.beginEdges(root); it != graph.endEdges(root); ++it) {
         vertex_data[it->second].best_weight = it->first;
         vertex_data[it->second].prev = root;
-        pq.push(*it);
+        pq.pushOrChangePriority(it->second, it->first);
     }
 
     while (!pq.empty()) {
-        auto [w, u] = pq.top(); // weight, vertexid
-        pq.pop();
+        auto [u, w] = std::move(pq.pop()); // weight, vertexid
 
         if (vertex_data[u].visited)
             continue;
@@ -106,7 +104,7 @@ void JarnikPrim::jarnik_prim_from_node(const algen::VertexId root,
             if (!vertex_data[it->second].visited && it->first < vertex_data[it->second].best_weight) {
                 vertex_data[it->second].best_weight = it->first;
                 vertex_data[it->second].prev = u;
-                pq.push(*it);
+                pq.pushOrChangePriority(it->second, it->first);
             }
         }
     }

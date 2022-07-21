@@ -1,7 +1,9 @@
 #pragma once
 
 #include "datastructures/adjacency_array.hpp"
+#include "datastructures/pq.hpp"
 
+#include <functional>
 #include <queue>
 
 class JarnikPrim {
@@ -21,7 +23,7 @@ class JarnikPrim {
         bool visited;
     };
 
-    using PriorityQueue = std::priority_queue<Edge, std::vector<Edge>, EdgeComparator>;
+    using PriorityQueue = IndexedPriorityQueue<algen::VertexId, algen::Weight, std::greater<>>;
     const algen::Weight W_INF = std::numeric_limits<algen::Weight>::max();
     const std::size_t NO_COMPONENT = -1;
     const VertexData DEFAULT_VERTEX_DATA = VertexData{(algen::VertexId)-1, W_INF, false};
@@ -30,7 +32,8 @@ class JarnikPrim {
 
     JarnikPrim(const std::size_t num_vertices)
         : num_vertices(num_vertices)
-        , vertex_data(new VertexData[num_vertices]) {}
+        , vertex_data(new VertexData[num_vertices])
+        , pq(num_vertices){}
 
     ~JarnikPrim() {
         delete[] vertex_data;
