@@ -19,7 +19,7 @@ class RangeMaximumQuery {
   public:
     explicit RangeMaximumQuery(std::vector<T> &v) : n_levels(ceil_log_2(v.size())), level_size(1ull << n_levels) {
 
-        levels.resize(n_levels * level_size, RMQ_MIN);
+        levels.resize(n_levels << n_levels, RMQ_MIN);
 
         // resize to eliminate special cases
         v.resize(level_size, RMQ_MIN);
@@ -66,7 +66,7 @@ class RangeMaximumQuery {
      */
     T query(std::size_t i, std::size_t j) const {
         const unsigned int level = std::__lg(i ^ j);
-        return std::max(levels[level * level_size + i], levels[level * level_size + j]);
+        return std::max(levels[(level << n_levels) + i], levels[(level << n_levels) + j]);
     }
 
     unsigned int get_n_levels() const {
@@ -78,7 +78,7 @@ class RangeMaximumQuery {
     }
 
     T get_level_value(unsigned int level, std::size_t i) const {
-        return levels[level * level_size + i];
+        return levels[(level << n_levels) + i];
     }
 
   private:
