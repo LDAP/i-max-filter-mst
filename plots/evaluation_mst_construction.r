@@ -33,24 +33,24 @@ ending <- ""
 if (!endsWith(pdfname, ".pdf")) ending <- ".pdf"
 pdf(paste0("", pdfname, ending), width=10, height=5)
 
-# Print some example plots to the output pdf. These examples are meant as basic 
-# plots for your results as well as an inspiration and a starting point for 
-# writing your own plots. Feel free to use the methods in utils.r and have a 
+# Print some example plots to the output pdf. These examples are meant as basic
+# plots for your results as well as an inspiration and a starting point for
+# writing your own plots. Feel free to use the methods in utils.r and have a
 # look at the code.
 
 # Plot with num_vertices on the x-axis and one line per average degree.
-g = get_plot_num_vertices_as_x(data.melted, 
-                               title = "Running time", 
-                               "execution_time_ns", 
-                               use_log_y = TRUE, 
+g = get_plot_num_vertices_as_x(data.melted,
+                               title = "Running time",
+                               "execution_time_ns",
+                               use_log_y = TRUE,
                                y_axis_desc = "time (ns)")
 plot(g)
 
 # Same plot as above except facetted by average degree.
-g = get_plot_num_vertices_as_x(data.melted, 
-                               title = "Running time", 
-                               "execution_time_ns", 
-                               use_log_y = TRUE, 
+g = get_plot_num_vertices_as_x(data.melted,
+                               title = "Running time",
+                               "execution_time_ns",
+                               use_log_y = TRUE,
                                y_axis_desc = "time (ns)",
                                column_for_faceting = "degree")
 plot(g)
@@ -61,13 +61,13 @@ time_per_edge <- function(data) {
 }
 
 # Plot with num_vertices on the x-axis. Applies transformation time_per_edge to data before plotting data.
-g = get_plot_num_vertices_as_x(data.melted, title = "Time per Edge", "execution_time_ns", transformation = time_per_edge, y_axis_desc = "time / m (ns)")
+g = get_plot_num_vertices_as_x(data.melted, title = "Time per Edge", "execution_time_ns", transformation = time_per_edge, y_axis_desc = "time / m (ns)", use_log_y = TRUE)
 plot(g)
 
 # Same as above except degree on x-axis.
-g = get_plot_degree_as_x(data.melted, title = "Time per Edge", "execution_time_ns", transformation = time_per_edge, y_axis_desc = "time / m (ns)")
+g = get_plot_degree_as_x(data.melted, title = "Time per Edge", "execution_time_ns", transformation = time_per_edge, y_axis_desc = "time / m (ns)", use_log_y = TRUE)
 plot(g)
 
 # Same as above except with min and max per data point (in addition to mean).
-g = get_plot_degree_as_x(data.melted, title = "Time per Edge with min max", "execution_time_ns", transformation = time_per_edge, y_axis_desc = "time / m (ns)", print_min_max = TRUE)
+g = get_plot_degree_as_x(data.melted, title = "Time per Edge with min max", "execution_time_ns", transformation = time_per_edge, y_axis_desc = "time / m (ns)", print_min_max = TRUE, use_log_y = TRUE)
 plot(g)
