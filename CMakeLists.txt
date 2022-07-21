@@ -49,6 +49,7 @@ set(CMAKE_CXX_EXTENSIONS FALSE)
 # Multi-threading support.
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 find_package(Threads)
+find_package(OpenMP)
 
 add_library(base_target INTERFACE)
 target_include_directories(base_target INTERFACE ${CMAKE_SOURCE_DIR})

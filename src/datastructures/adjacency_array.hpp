@@ -10,6 +10,38 @@ class AdjacencyArray {
     using EdgeIterator = std::vector<Edge>::const_iterator;
 
     /* Expects edges only in one direction */
+    void constructFromUndirectedV(const std::vector<algen::WEdgeList> &edges_v, const algen::VertexId num_vertices) {
+        std::size_t n_edges = 0;
+        for (auto &v : edges_v) {
+            n_edges += v.size();
+        }
+
+        _indices.resize(num_vertices + 1);
+        _edges.resize(2 * n_edges);
+        std::vector<std::size_t> out_degrees(num_vertices + 1);
+
+        for (auto &edges : edges_v) {
+            for (const algen::WEdge &e : edges) {
+                out_degrees[e.tail]++;
+                out_degrees[e.head]++;
+            }
+        }
+
+        std::size_t sum = 0;
+        for (std::size_t i = 0; i < num_vertices + 1; i++) {
+            _indices[i] = sum;
+            sum += out_degrees[i];
+        }
+
+        for (auto &edges : edges_v) {
+            for (const algen::WEdge &e : edges) {
+                _edges[_indices[e.tail] + --out_degrees[e.tail]] = {e.weight, e.head};
+                _edges[_indices[e.head] + --out_degrees[e.head]] = {e.weight, e.tail};
+            }
+        }
+    }
+
+    /* Expects edges only in one direction */
     void constructFromUndirected(const algen::WEdgeList &edges, const algen::VertexId num_vertices) {
         _indices.resize(num_vertices + 1);
         _edges.resize(2 * edges.size());
