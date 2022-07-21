@@ -9,7 +9,6 @@
 class IMaxFilter {
   public:
     algen::WEdgeList operator()(const algen::WEdgeList &edge_list, const algen::VertexId num_vertices) {
-        const std::size_t seed = 42;
         const std::size_t sample_size = std::sqrt(edge_list.size() / 2. * num_vertices);
         algen::WEdgeList edges;
         edges.reserve(sample_size * 1.05);
