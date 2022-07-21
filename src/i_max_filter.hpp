@@ -13,7 +13,7 @@ class IMaxFilter {
 
         // Compare expected runtimes of single Jarnik-Prim with I-Max-Filter
         // and use single Jarnik-Prim in case of low average degree.
-        const float T_FILTER = 2. / 3;
+        const float T_FILTER = .7;
         if (edge_list.size() < (2 * sample_size) + edge_list.size() * T_FILTER) {
             return JarnikPrim(num_vertices)(edge_list, num_vertices);
         }
