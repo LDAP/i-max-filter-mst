@@ -5,7 +5,6 @@
 #include "jarnik_prim.h"
 
 #include <thread>
-#include <chrono>
 #include <omp.h>
 
 class ParallelIMaxFilter {
