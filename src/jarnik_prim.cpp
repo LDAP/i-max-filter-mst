@@ -25,8 +25,6 @@ void JarnikPrim::i_max_filter_jarnik_prim_from_node(const algen::VertexId root,
     while (!pq.empty()) {
         auto [u, w] = pq.pop(); // weight, vertexid
 
-        if (vertex_data[u].visited)
-            continue;
         vertex_data[u].visited = true;
 
         // edge selected
@@ -34,10 +32,6 @@ void JarnikPrim::i_max_filter_jarnik_prim_from_node(const algen::VertexId root,
 
         jp_nums[u] = jp_weights.size();
         jp_weights.push_back(w);
-
-        if (msf.size() == num_vertices - 1) {
-            return;
-        }
 
         // check out neighbors of node at other end
         for (auto it = graph.beginEdges(u); it != graph.endEdges(u); ++it) {
@@ -89,8 +83,6 @@ void JarnikPrim::jarnik_prim_from_node(const algen::VertexId root,
     while (!pq.empty()) {
         auto [u, w] = pq.pop(); // weight, vertexid
 
-        if (vertex_data[u].visited)
-            continue;
         vertex_data[u].visited = true;
 
         // edge selected
