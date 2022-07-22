@@ -23,7 +23,7 @@ void JarnikPrim::i_max_filter_jarnik_prim_from_node(const algen::VertexId root,
     }
 
     while (!pq.empty()) {
-        auto [u, w] = pq.pop(); // weight, vertexid
+        auto [u, w] = pq.pop();
 
         vertex_data[u].visited = true;
 
@@ -81,7 +81,7 @@ void JarnikPrim::jarnik_prim_from_node(const algen::VertexId root,
     }
 
     while (!pq.empty()) {
-        auto [u, w] = pq.pop(); // weight, vertexid
+        auto [u, w] = pq.pop();
 
         vertex_data[u].visited = true;
 
