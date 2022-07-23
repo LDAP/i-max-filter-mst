@@ -61,3 +61,5 @@ compile_commands.json
 
 ## Allow doc pdfs
 !/docs/*
+!/plots/*.pdf
+!/plots/*.csv
