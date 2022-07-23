@@ -109,23 +109,6 @@ TEST(JarnikPrimTests, generator_correctness) {
     ASSERT_EQ(algen::sum_weights(mst_org), algen::sum_weights(mst_jp));
 };
 
-TEST(JarnikPrimTests, time) {
-    benchmark::GNM_Generator generator;
-    const std::size_t max_edge_weight = 255;
-    std::size_t log_n = 12;
-    std::size_t log_m = 20;
-    generator.configure(log_n, log_m, max_edge_weight);
-    auto gen_edges = generator.generate();
-
-    const std::size_t num_vertices = 1ull << log_n;
-    algen::WEdgeList mst_jp;
-    AdjacencyArray adj_arr;
-    adj_arr.constructFromUndirected(gen_edges, num_vertices);
-    JarnikPrim(num_vertices).jarnik_prim(adj_arr, mst_jp);
-
-    FAIL();
-};
-
 TEST(IMaxJarnikPrimTests, mst_correctness) {
     const algen::VertexId num_vertices = 6;
     algen::WEdgeList edges;
