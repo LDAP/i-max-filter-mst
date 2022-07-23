@@ -48,6 +48,8 @@ void JarnikPrim::i_max_filter_jarnik_prim(const JarnikPrim::GraphRepresentation 
                                           algen::WEdgeList &msf,
                                           std::vector<std::size_t> &jp_nums,
                                           std::vector<algen::Weight> &jp_weights) {
+    prepare();
+    
     assert(msf.size() == 0);
     assert(jp_nums.size() == num_vertices);
     assert(jp_weights.size() == 0);
@@ -56,7 +58,6 @@ void JarnikPrim::i_max_filter_jarnik_prim(const JarnikPrim::GraphRepresentation 
                e.prev == DEFAULT_VERTEX_DATA.prev;
     }));
 
-    prepare();
 
     msf.reserve(num_vertices);
     jp_weights.reserve(num_vertices);
@@ -101,13 +102,13 @@ void JarnikPrim::jarnik_prim_from_node(const algen::VertexId root,
 }
 
 void JarnikPrim::jarnik_prim(const JarnikPrim::GraphRepresentation &graph, algen::WEdgeList &msf) {
+    prepare();
+
     assert(msf.size() == 0);
     assert(std::all_of(vertex_data, vertex_data + num_vertices, [&](VertexData const &e) {
         return e.best_weight == DEFAULT_VERTEX_DATA.best_weight && e.visited == DEFAULT_VERTEX_DATA.visited &&
                e.prev == DEFAULT_VERTEX_DATA.prev;
     }));
-
-    prepare();
 
     msf.reserve(num_vertices);
 
