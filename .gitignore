@@ -63,3 +63,9 @@ compile_commands.json
 !/docs/*
 !/plots/*.pdf
 !/plots/*.csv
+
+*.log
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.aux
