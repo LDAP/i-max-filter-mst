@@ -63,6 +63,7 @@ compile_commands.json
 !/docs/*
 !/plots/*.pdf
 !/plots/*.csv
+!report.pdf
 
 *.log
 *.synctex.gz
