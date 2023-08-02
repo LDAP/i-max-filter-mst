@@ -1,3 +1,7 @@
+## Authors
+
+[@LDAP](https://github.com/LDAP) and [@noahares](https://github.com/noahares)
+
 # Algorithm Engineering 2022
 This repository contains the framework for the exercises regarding the Algorithm Engineering 2022 lecture.
 
